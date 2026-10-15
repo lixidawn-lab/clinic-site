@@ -1,5 +1,6 @@
 ---
-// Fixed booking bar: WhatsApp (wa.me, prefilled greeting) + phone (tel:). No forms (CLAUDE.md rule 5).
+// Fixed booking bar (PRD 2.1): "Book an Appointment" opens WhatsApp (wa.me, prefilled greeting);
+// the phone number is shown next to it and dials on tap (tel:). No forms (CLAUDE.md rule 5).
 // While a number is still TBC, the button is shown inert with the TBC marker instead of a broken link.
 import TBC from './TBC.astro';
 import { localeFromParams, useTranslations } from '../i18n';
@@ -19,18 +20,20 @@ const tel = telHref(settings.phone);
 <aside class="booking-cta" aria-label={t.a11y.bookingBar}>
   <div class="container inner">
     {wa
-      ? <a class="btn primary" href={wa} rel="noopener" target="_blank">{t.cta.whatsapp}</a>
-      : <span class="btn primary is-tbc">{t.cta.whatsapp} <TBC value={settings.whatsapp} /></span>}
+      ? <a class="btn primary" href={wa} rel="noopener" target="_blank">{t.cta.book}</a>
+      : <span class="btn primary is-tbc">{t.cta.book} <TBC value={settings.whatsapp} /></span>}
     {tel
-      ? <a class="btn secondary" href={tel}>{t.cta.call}</a>
+      ? <a class="btn secondary" href={tel}>{t.cta.call} {settings.phone}</a>
       : <span class="btn secondary is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>}
   </div>
 </aside>
 
 <style>
+  /* Sticky (not fixed): the bar keeps its own space at the end of the page, so it can never
+     cover the footer, however tall it gets (e.g. when TBC markers wrap on narrow phones). */
   .booking-cta {
-    position: fixed;
-    inset: auto 0 0 0;
+    position: sticky;
+    bottom: 0;
     z-index: 50;
     min-height: var(--cta-height);
     padding-bottom: env(safe-area-inset-bottom);

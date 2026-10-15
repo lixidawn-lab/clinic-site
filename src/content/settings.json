@@ -1,15 +1,16 @@
 {
   "site": {
-    "clinicName": { "en": "TBC:?", "zh": "TBC:?" },
-    "address": { "en": "TBC:?", "zh": "TBC:?" },
-    "phone": "TBC:?",
-    "whatsapp": "TBC:?",
-    "hours": { "en": "TBC:?", "zh": "TBC:?" },
-    "mapUrl": "TBC:?",
-    "parking": { "en": "TBC:?", "zh": "TBC:?" },
-    "fees": { "en": "TBC:?", "zh": "TBC:?" },
-    "payment": { "en": "TBC:?", "zh": "TBC:?" },
-    "mabApprovalNo": "TBC:?",
-    "bookingMessage": { "en": "TBC:?", "zh": "TBC:?" }
+    "clinicName": { "en": "TBC:3.1", "zh": "TBC:3.1" },
+    "address": { "en": "TBC:3.2", "zh": "TBC:3.2" },
+    "phone": "TBC:3.3",
+    "whatsapp": "TBC:2.1",
+    "hours": { "en": "TBC:3.4", "zh": "TBC:3.4" },
+    "mapUrl": "TBC:6.4",
+    "parking": { "en": "TBC:3.5", "zh": "TBC:3.5" },
+    "fees": { "en": "TBC:3.6", "zh": "TBC:3.6" },
+    "payment": { "en": "TBC:3.7", "zh": "TBC:3.7" },
+    "mabApprovalNo": "TBC:1.5",
+    "privacyNotice": { "en": "TBC:1.6", "zh": "TBC:1.6" },
+    "bookingMessage": { "en": "TBC:2.1", "zh": "TBC:2.1" }
   }
 }

@@ -7,35 +7,48 @@ export const zh: Dict = {
     skipToContent: '跳到正文',
     mainNav: '主导航',
     switchLanguage: '用简体中文阅读本页',
-    bookingBar: '预约',
+    bookingBar: '预约咨询',
   },
   nav: {
     home: '首页',
     about: '关于涵倪',
-    notes: '医生手记',
+    notes: '涵倪的笔记',
     appointments: '预约与诊所',
   },
   cta: {
-    whatsapp: 'WhatsApp 预约',
+    book: '预约咨询',
     call: '致电',
   },
   footer: {
     address: '地址',
     phone: '电话',
+    whatsapp: 'WhatsApp',
     hours: '营业时间',
-    mabApprovalNo: 'MAB 广告批准号',
+    mabApprovalNo: 'MAB 批准编号',
+    privacy: '私隐声明',
   },
   tbc: {
     label: '待补充 · TBC',
-    unnumbered: '清单编号待定',
   },
   pages: {
-    home: { title: '首页', description: '马来西亚马六甲的精神科诊所。' },
-    about: { title: '关于涵倪', description: '关于刘涵倪医生（精神科）。' },
-    notes: { title: '医生手记', description: '刘涵倪医生撰写的文章。' },
-    appointments: { title: '预约与诊所', description: '如何预约，以及如何找到诊所。' },
+    home: {
+      title: '首页',
+      description: '刘涵倪医生在马来西亚马六甲的精神科专科诊所。认识涵倪的专业背景与关注领域，阅读她的笔记，并预约咨询。',
+    },
+    about: {
+      title: '关于涵倪',
+      description: '刘涵倪医生的专业背景、专业关注领域与诊疗理念。',
+    },
+    notes: {
+      title: '涵倪的笔记',
+      description: '刘涵倪医生关于心理健康的专业写作与临床思考。',
+    },
+    appointments: {
+      title: '预约与诊所',
+      description: '如何预约刘涵倪医生：第一次就诊、持续照护、常见问题与诊所信息。',
+    },
   },
   stub: {
-    notice: '本页目前只是骨架，内容将在阶段 2 加入。',
+    notice: '本页目前只是骨架，内容会在之后的批次加入。',
   },
 };

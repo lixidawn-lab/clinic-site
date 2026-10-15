@@ -6,37 +6,51 @@ export const en = {
     skipToContent: 'Skip to main content',
     mainNav: 'Main',
     switchLanguage: 'Read this page in English',
-    bookingBar: 'Book an appointment',
+    bookingBar: 'Book an Appointment',
   },
   nav: {
     home: 'Home',
     about: 'About Hanni',
-    notes: "Doctor's Notes",
+    notes: 'Doctor’s Notes',
     appointments: 'Appointments & Clinic',
   },
+  // Site-wide CTA (PRD 2): opens WhatsApp. The phone number is shown next to it (PRD 2.1).
   cta: {
-    whatsapp: 'Book on WhatsApp',
+    book: 'Book an Appointment',
     call: 'Call',
   },
   footer: {
     address: 'Address',
     phone: 'Phone',
+    whatsapp: 'WhatsApp',
     hours: 'Opening hours',
     mabApprovalNo: 'MAB approval no.',
+    privacy: 'Privacy notice',
   },
   tbc: {
     label: '待补充 · TBC',
-    unnumbered: 'checklist no. pending',
   },
-  // Per-page <title> and meta description. Placeholders until page copy is written in phase 2.
+  // Per-page <title> and meta description, from the page purposes in PRD 3. The page batches may refine them.
   pages: {
-    home: { title: 'Home', description: 'Psychiatry clinic in Melaka, Malaysia.' },
-    about: { title: 'About Hanni', description: 'About Dr. Lau Harn Ni, psychiatrist.' },
-    notes: { title: "Doctor's Notes", description: "Articles by Dr. Lau Harn Ni." },
-    appointments: { title: 'Appointments & Clinic', description: 'How to book an appointment and find the clinic.' },
+    home: {
+      title: 'Home',
+      description: 'Dr. Lau Harn Ni’s psychiatry clinic in Melaka, Malaysia. Get to know her background and areas of focus, read her notes, and book an appointment.',
+    },
+    about: {
+      title: 'About Hanni',
+      description: 'Dr. Lau Harn Ni’s professional background, clinical interests and approach to care.',
+    },
+    notes: {
+      title: 'Doctor’s Notes',
+      description: 'Dr. Lau Harn Ni’s writing and clinical reflections on mental health.',
+    },
+    appointments: {
+      title: 'Appointments & Clinic',
+      description: 'How to book with Dr. Lau Harn Ni: your first visit, follow-up care, common questions and clinic information.',
+    },
   },
   stub: {
-    notice: 'This page is a skeleton. Its content will be added in phase 2.',
+    notice: 'This page is a skeleton. Its content will be added in a later batch.',
   },
 };
 

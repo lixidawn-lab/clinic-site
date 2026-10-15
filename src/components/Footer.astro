@@ -1,7 +1,7 @@
 ---
 import Field from './Field.astro';
 import { localeFromParams, useTranslations } from '../i18n';
-import { telHref } from '../lib/links';
+import { telHref, whatsappHref } from '../lib/links';
 import type { Settings } from '../lib/content';
 
 interface Props {
@@ -12,6 +12,7 @@ const { settings } = Astro.props;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
 const tel = telHref(settings.phone);
+const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
 ---
 <footer class="site-footer">
   <div class="container">
@@ -22,8 +23,13 @@ const tel = telHref(settings.phone);
         <dt>{t.footer.phone}</dt>
         <dd>{tel ? <a href={tel}>{settings.phone}</a> : <Field value={settings.phone} />}</dd>
       </div>
+      <div>
+        <dt>{t.footer.whatsapp}</dt>
+        <dd>{wa ? <a href={wa} rel="noopener" target="_blank">{settings.whatsapp}</a> : <Field value={settings.whatsapp} />}</dd>
+      </div>
       <div><dt>{t.footer.hours}</dt><dd><Field value={settings.hours[locale]} /></dd></div>
       <div><dt>{t.footer.mabApprovalNo}</dt><dd><Field value={settings.mabApprovalNo} /></dd></div>
+      <div><dt>{t.footer.privacy}</dt><dd><Field value={settings.privacyNotice[locale]} /></dd></div>
     </dl>
   </div>
 </footer>

@@ -19,5 +19,5 @@
   --measure: 68ch;
   --radius: 6px;
   --focus: 3px solid var(--ink);
-  --cta-height: 64px;   /* fixed booking bar */
+  --cta-height: 64px;   /* sticky booking bar (minimum height) */
 }

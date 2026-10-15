@@ -25,7 +25,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 - Astro（最新稳定版）+ TypeScript，全站静态生成，正文不依赖 JS。
 - 样式：原生 CSS + CSS 变量。不使用 Tailwind 和 UI 框架。依赖越少越好。
 - 内容：Astro Content Collections，放在 `src/content/`。schema 用 zod 定义，字段与将来的 Sanity schema 一一对应（第 3 阶段切换）。内容读取统一走 `src/lib/content.ts`，切换 CMS 时只需改这一层。
-- 部署：Cloudflare Pages（第 4 阶段）。
+- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare Pages，推送后自动部署（构建 `npm run build`，输出 `dist`）。预览站不设 `PUBLIC_ALLOW_INDEXING`。
 
 ## 双语与 SEO
 - 路由：`/en/...`、`/zh/...`（简体），两种语言共用英文 slug；根路径 `/` 重定向到 `/en/`。
@@ -37,7 +37,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 - 所有 UI 文案放在 `src/i18n/{en,zh}.ts`，组件里不写死文字。
 
 ## 内容模型（src/content）
-- `settings`（单例）：clinicName{en,zh}、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、bookingMessage{en,zh}。缺失的值统一写 `"TBC:x.x"`。
+- `settings`（单例）：clinicName{en,zh}、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、privacyNotice{en,zh}、bookingMessage{en,zh}。缺失的值统一写 `"TBC:x.x"`（x.x 是 `docs/checklist.md` 的编号，必须写）。
 - `doctor`（单例）：name、titles、qualifications[]、languages[]、bio{en,zh}（使用涵倪提供的原文，不改写）、approach、publications[]{title,venue,date,url,role,verified}。只渲染 `verified:true` 的发表。
 - `notes`：title{en,zh}、summary、body（en/zh 各一个 md 文件）、topic、publishedAt、reviewedAt、featured、externalUrl。
 - `services`、`faq`：带 `confirmed` 布尔值；未确认的显示 TBC。
@@ -46,11 +46,12 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 --green:#1F863F（品牌）  --bg:#F8F7F2  --tint:#DCE8DD  --ink:#344237
 白字放在 --green 上的对比度约 4.6:1（AA），不要再调浅。移动端优先，触控目标 ≥ 44px，焦点状态清晰可见。
 
-## 分阶段（每阶段结束后停下来，汇报并等用户确认）
-1. **骨架**：脚手架、令牌、Base 布局、页头/页脚（含固定的预约 CTA）、i18n 路由、SEO head 组件、TBC 组件、noindex 开关。
-2. **页面**：按 PRD 第 3 节做出 4 个页面和文章详情页，加 1 篇明确标注的示例文章、JSON-LD、sitemap。
-3. **Sanity**：Studio 和 schema、替换 content.ts、发布时用 webhook 重建、文章两种语言都填写才能发布。
-4. **上线前检查**：死链、hreflang 配对、结构化数据验证、Lighthouse 移动端 ≥ 90、对比度；部署 noindex 预览站。
+## 分阶段（与 lixi-project-workflow 一致；每批结束后停下来，汇报并等用户确认）
+1. **骨架（Code）**：脚手架、令牌、Base 布局、页头/页脚（含固定的预约 CTA）、i18n 路由、SEO head 组件、TBC 组件、noindex 开关；部署 noindex 预览站（GitHub → Cloudflare Pages，推送后自动部署）。
+2. **首页设计（灵晞 + Chat，Code 不参与）**：在 Chat 的设计画布上定首页高保真和设计系统。Code 不做页面视觉设计。
+3. **页面批次（Code）**：首页设计定稿后，套用设计系统，按 PRD 第 3 节分批做出 4 个页面和文章详情页，加 1 篇明确标注的示例文章、JSON-LD、sitemap。每批都部署到预览站。
+4. **Sanity（Code）**：Studio 和 schema、替换 content.ts、发布时用 webhook 重建、文章两种语言都填写才能发布。
+5. **验收上线**：死链、hreflang 配对、结构化数据验证、Lighthouse 移动端 ≥ 90、对比度、跨设备测试。获得 MAB 批准（清单 1.1）并经用户明确确认后，才打开收录，提交 Google Search Console 和 Bing。
 
 ## 协作方式（交接/）
 所有任务和汇报都通过 `交接/` 目录进行。

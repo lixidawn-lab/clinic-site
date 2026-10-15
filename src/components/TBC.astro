@@ -10,11 +10,11 @@ interface Props {
 }
 
 const t = useTranslations(localeFromParams(Astro.params));
-const ref = Astro.props.refNo ?? (Astro.props.value ? tbcRef(Astro.props.value) : null);
+const ref = Astro.props.refNo ?? (Astro.props.value ? tbcRef(Astro.props.value) : '');
 ---
-<mark class="tbc" data-tbc={ref ?? '?'}>
+<mark class="tbc" data-tbc={ref}>
   {t.tbc.label}
-  <span class="tbc-ref">{ref ? `TBC ${ref}` : t.tbc.unnumbered}</span>
+  {ref && <span class="tbc-ref">TBC {ref}</span>}
 </mark>
 
 <style>
