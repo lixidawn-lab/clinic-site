@@ -25,7 +25,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 - Astro（最新稳定版）+ TypeScript，全站静态生成，正文不依赖 JS。
 - 样式：原生 CSS + CSS 变量。不使用 Tailwind 和 UI 框架。依赖越少越好。
 - 内容：Astro Content Collections，放在 `src/content/`。schema 用 zod 定义，字段与将来的 Sanity schema 一一对应（第 3 阶段切换）。内容读取统一走 `src/lib/content.ts`，切换 CMS 时只需改这一层。
-- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare Pages，推送后自动部署（构建 `npm run build`，输出 `dist`）。预览站不设 `PUBLIC_ALLOW_INDEXING`。
+- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare（以 Worker 静态资源形式部署），推送 `main` 后自动部署（构建 `npm run build`，输出 `dist`）。预览站：https://clinic-site.lixi-dawn5.workers.dev ，不设 `PUBLIC_ALLOW_INDEXING`。
 
 ## 双语与 SEO
 - 路由：`/en/...`、`/zh/...`（简体），两种语言共用英文 slug；根路径 `/` 重定向到 `/en/`。
