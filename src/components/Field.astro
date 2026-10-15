@@ -1,0 +1,11 @@
+---
+// Shows a content value, or the TBC marker if the value is still "TBC:x.x".
+import TBC from './TBC.astro';
+import { isTbc } from '../lib/tbc';
+
+interface Props {
+  value: string;
+}
+const { value } = Astro.props;
+---
+{isTbc(value) ? <TBC value={value} /> : value}

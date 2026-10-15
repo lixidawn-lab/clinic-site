@@ -1,0 +1,14 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageStub from '../../../components/PageStub.astro';
+import { localeFromParams, localeStaticPaths, useTranslations } from '../../../i18n';
+import { routes } from '../../../lib/routes';
+
+export const getStaticPaths = localeStaticPaths;
+
+const t = useTranslations(localeFromParams(Astro.params));
+const page = t.pages.notes;
+---
+<Base title={page.title} description={page.description} route={routes.notes} nav="notes">
+  <PageStub page="notes" />
+</Base>

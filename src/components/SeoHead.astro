@@ -1,0 +1,39 @@
+---
+// <title>, description, canonical, hreflang, robots and Open Graph tags for every page.
+import { htmlLang, localeFromParams, locales, localizedPath, ogLocale, otherLocales, defaultLocale } from '../i18n';
+import { allowIndexing } from '../lib/indexing';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Route without locale, e.g. "about" or "notes/some-slug". "" = home. */
+  route: string;
+  /** Appended to the title when known (e.g. the clinic name). */
+  siteName?: string;
+  ogType?: 'website' | 'article';
+}
+
+const { title, description, route, siteName, ogType = 'website' } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const abs = (path: string) => new URL(path, Astro.site).href;
+
+const fullTitle = siteName ? `${title} | ${siteName}` : title;
+const canonical = abs(localizedPath(locale, route));
+const alternates = locales.map((l) => ({ hreflang: htmlLang[l], href: abs(localizedPath(l, route)) }));
+const xDefault = abs(localizedPath(defaultLocale, route));
+---
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+<link rel="alternate" hreflang="x-default" href={xDefault} />
+{!allowIndexing && <meta name="robots" content="noindex,nofollow" />}
+
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={ogLocale[locale]} />
+{otherLocales(locale).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
+{siteName && <meta property="og:site_name" content={siteName} />}
+<meta name="twitter:card" content="summary" />

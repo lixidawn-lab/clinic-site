@@ -1,0 +1,46 @@
+---
+import '../styles/global.css';
+import SeoHead from '../components/SeoHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BookingCta from '../components/BookingCta.astro';
+import { htmlLang, localeFromParams, useTranslations } from '../i18n';
+import { getSettings } from '../lib/content';
+import { isTbc } from '../lib/tbc';
+import type { PageKey } from '../lib/routes';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Route without locale, e.g. "about". "" = home. */
+  route: string;
+  /** Highlights this item in the main nav. */
+  nav?: PageKey;
+  ogType?: 'website' | 'article';
+}
+
+const { title, description, route, nav, ogType } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const settings = await getSettings();
+const clinicName = settings.clinicName[locale];
+const siteName = isTbc(clinicName) ? undefined : clinicName;
+---
+<!doctype html>
+<html lang={htmlLang[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <SeoHead title={title} description={description} route={route} siteName={siteName} ogType={ogType} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.a11y.skipToContent}</a>
+    <Header settings={settings} current={nav} route={route} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer settings={settings} />
+    <BookingCta settings={settings} />
+  </body>
+</html>

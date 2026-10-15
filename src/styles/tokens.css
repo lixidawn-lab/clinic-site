@@ -1,0 +1,23 @@
+/*
+ * Base design tokens from CLAUDE.md. Waiting for the owner's visual design —
+ * do not add new colours or a type scale here without their sign-off.
+ */
+:root {
+  --green: #1F863F; /* brand. White on this is ~4.6:1 (AA) — do not lighten. */
+  --bg: #F8F7F2;
+  --tint: #DCE8DD;
+  --ink: #344237;
+  --white: #FFFFFF;
+
+  /* TBC marker: deliberately loud so missing info can't be missed. */
+  --tbc-bg: #FFE14D;
+  --tbc-ink: #1A1A1A;
+
+  /* Placeholder layout values (owner to decide). */
+  --tap: 44px;          /* minimum touch target */
+  --gutter: 16px;
+  --measure: 68ch;
+  --radius: 6px;
+  --focus: 3px solid var(--ink);
+  --cta-height: 64px;   /* fixed booking bar */
+}

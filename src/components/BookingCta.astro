@@ -1,0 +1,67 @@
+---
+// Fixed booking bar: WhatsApp (wa.me, prefilled greeting) + phone (tel:). No forms (CLAUDE.md rule 5).
+// While a number is still TBC, the button is shown inert with the TBC marker instead of a broken link.
+import TBC from './TBC.astro';
+import { localeFromParams, useTranslations } from '../i18n';
+import { telHref, whatsappHref } from '../lib/links';
+import type { Settings } from '../lib/content';
+
+interface Props {
+  settings: Settings;
+}
+
+const { settings } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
+const tel = telHref(settings.phone);
+---
+<aside class="booking-cta" aria-label={t.a11y.bookingBar}>
+  <div class="container inner">
+    {wa
+      ? <a class="btn primary" href={wa} rel="noopener" target="_blank">{t.cta.whatsapp}</a>
+      : <span class="btn primary is-tbc">{t.cta.whatsapp} <TBC value={settings.whatsapp} /></span>}
+    {tel
+      ? <a class="btn secondary" href={tel}>{t.cta.call}</a>
+      : <span class="btn secondary is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>}
+  </div>
+</aside>
+
+<style>
+  .booking-cta {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 50;
+    min-height: var(--cta-height);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--bg);
+    border-top: 1px solid var(--tint);
+  }
+  .inner {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: var(--cta-height);
+  }
+  .btn {
+    flex: 1;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: var(--tap);
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+  }
+  .primary { background: var(--green); color: var(--white); }
+  .secondary { border: 2px solid var(--green); color: var(--green); }
+  .is-tbc { font-size: 0.875rem; }
+  @media (min-width: 48rem) {
+    .inner { justify-content: flex-end; }
+    .btn { flex: 0 0 auto; padding-inline: 24px; }
+  }
+</style>

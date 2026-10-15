@@ -1,0 +1,42 @@
+---
+import Field from './Field.astro';
+import { localeFromParams, useTranslations } from '../i18n';
+import { telHref } from '../lib/links';
+import type { Settings } from '../lib/content';
+
+interface Props {
+  settings: Settings;
+}
+
+const { settings } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const tel = telHref(settings.phone);
+---
+<footer class="site-footer">
+  <div class="container">
+    <p class="name"><Field value={settings.clinicName[locale]} /></p>
+    <dl>
+      <div><dt>{t.footer.address}</dt><dd><Field value={settings.address[locale]} /></dd></div>
+      <div>
+        <dt>{t.footer.phone}</dt>
+        <dd>{tel ? <a href={tel}>{settings.phone}</a> : <Field value={settings.phone} />}</dd>
+      </div>
+      <div><dt>{t.footer.hours}</dt><dd><Field value={settings.hours[locale]} /></dd></div>
+      <div><dt>{t.footer.mabApprovalNo}</dt><dd><Field value={settings.mabApprovalNo} /></dd></div>
+    </dl>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 48px;
+    padding-block: 32px;
+    background: var(--tint);
+  }
+  .name { margin: 0 0 16px; font-weight: 700; }
+  dl { margin: 0; display: grid; gap: 12px; }
+  dt { font-weight: 600; }
+  dd { margin: 0; white-space: pre-line; }
+  a { display: inline-flex; align-items: center; min-height: var(--tap); }
+</style>

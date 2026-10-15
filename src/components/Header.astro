@@ -1,0 +1,76 @@
+---
+import Field from './Field.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { localeFromParams, localizedPath, useTranslations } from '../i18n';
+import { navOrder, routes, type PageKey } from '../lib/routes';
+import type { Settings } from '../lib/content';
+
+interface Props {
+  settings: Settings;
+  /** Which nav item is the current page (or the section it belongs to). */
+  current?: PageKey;
+  route: string;
+}
+
+const { settings, current, route } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+---
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={localizedPath(locale, routes.home)}>
+      <Field value={settings.clinicName[locale]} />
+    </a>
+    <LanguageSwitcher route={route} />
+  </div>
+  <nav class="container" aria-label={t.a11y.mainNav}>
+    <ul>
+      {navOrder.map((key) => (
+        <li>
+          <a href={localizedPath(locale, routes[key])} aria-current={key === current ? 'page' : undefined}>
+            {t.nav[key]}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header { border-bottom: 1px solid var(--tint); }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 8px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 4px;
+    display: flex;
+    gap: 4px;
+    /* Mobile: one scrollable row instead of a JS menu. */
+    overflow-x: auto;
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding-inline: 12px;
+    color: var(--ink);
+    white-space: nowrap;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+  }
+  nav a[aria-current='page'] { border-bottom-color: var(--green); font-weight: 600; }
+</style>

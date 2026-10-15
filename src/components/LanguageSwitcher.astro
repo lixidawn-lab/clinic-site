@@ -1,0 +1,35 @@
+---
+// Links to the same page in the other language(s).
+import { htmlLang, localeFromParams, localizedPath, otherLocales, useTranslations } from '../i18n';
+
+interface Props {
+  route: string;
+}
+const locale = localeFromParams(Astro.params);
+---
+<ul class="lang-switcher">
+  {otherLocales(locale).map((l) => {
+    const t = useTranslations(l);
+    return (
+      <li>
+        <a href={localizedPath(l, Astro.props.route)} hreflang={htmlLang[l]} lang={htmlLang[l]} aria-label={t.a11y.switchLanguage}>
+          {t.langName}
+        </a>
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .lang-switcher { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding-inline: 12px;
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+    color: var(--ink);
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+// Loud yellow "待补充 · TBC" marker for information the clinic hasn't confirmed yet.
+// `value` is the raw "TBC:3.2" string from content; `refNo` can be passed directly instead.
+import { localeFromParams, useTranslations } from '../i18n';
+import { tbcRef } from '../lib/tbc';
+
+interface Props {
+  value?: string;
+  refNo?: string;
+}
+
+const t = useTranslations(localeFromParams(Astro.params));
+const ref = Astro.props.refNo ?? (Astro.props.value ? tbcRef(Astro.props.value) : null);
+---
+<mark class="tbc" data-tbc={ref ?? '?'}>
+  {t.tbc.label}
+  <span class="tbc-ref">{ref ? `TBC ${ref}` : t.tbc.unnumbered}</span>
+</mark>
+
+<style>
+  .tbc {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: 0.1em 0.5em;
+    border: 2px dashed var(--tbc-ink);
+    border-radius: var(--radius);
+    background: var(--tbc-bg);
+    color: var(--tbc-ink);
+    font-weight: 600;
+    font-size: 0.875em;
+    line-height: 1.4;
+  }
+  .tbc-ref {
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -1,0 +1,15 @@
+{
+  "site": {
+    "clinicName": { "en": "TBC:?", "zh": "TBC:?" },
+    "address": { "en": "TBC:?", "zh": "TBC:?" },
+    "phone": "TBC:?",
+    "whatsapp": "TBC:?",
+    "hours": { "en": "TBC:?", "zh": "TBC:?" },
+    "mapUrl": "TBC:?",
+    "parking": { "en": "TBC:?", "zh": "TBC:?" },
+    "fees": { "en": "TBC:?", "zh": "TBC:?" },
+    "payment": { "en": "TBC:?", "zh": "TBC:?" },
+    "mabApprovalNo": "TBC:?",
+    "bookingMessage": { "en": "TBC:?", "zh": "TBC:?" }
+  }
+}
