@@ -23,10 +23,10 @@
   --tbc-ink: #6B4E00;
 
   /* Type */
-  --font-heading: 'Poppins', 'Milky Han Mono', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  --font-body: 'Palanquin', 'Milky Han Mono', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  /* For the odd CJK word on English pages (language switcher), so they don't download the Chinese font. */
-  --font-cjk-system: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  /* Chinese uses the visitor's system font (no Chinese web font is downloaded). */
+  --font-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-heading: 'Poppins', var(--font-cjk);
+  --font-body: 'Palanquin', var(--font-cjk);
 
   /* Sizes: mobile first; desktop values in the media query below. */
   --text: 17px;           /* body */

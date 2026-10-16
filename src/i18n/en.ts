@@ -133,6 +133,11 @@ export const en = {
       description: 'How to book with Dr. Lau Harn Ni: your first visit, follow-up care, common questions and clinic information.',
     },
   },
+  // Share image (og:image, src/pages/og/[lang].jpg.ts): the line under the doctor's name, and its alt text.
+  share: {
+    cardLine: 'Psychiatrist in Melaka',
+    imageAlt: 'Dr. Lau Harn Ni, psychiatrist in Melaka',
+  },
 };
 
 type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };

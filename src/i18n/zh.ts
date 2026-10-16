@@ -129,4 +129,8 @@ export const zh: Dict = {
       description: '如何预约刘涵倪医生：第一次就诊、持续照护、常见问题与诊所信息。',
     },
   },
+  share: {
+    cardLine: '马六甲精神科专科医生',
+    imageAlt: '刘涵倪医生，马六甲精神科专科医生',
+  },
 };

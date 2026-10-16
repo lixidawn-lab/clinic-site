@@ -36,25 +36,12 @@ const siteName = isTbc(clinicName) ? undefined : clinicName;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <SeoHead title={title} description={description} route={route} siteName={siteName} ogType={ogType} externalCanonical={externalCanonical} />
-    <!--
-      Chinese web font (~370 KB) is requested only after the first paint, so it never delays the page:
-      on a first visit Chinese text shows in the system font for a moment, then switches.
-      Once a visitor has it (localStorage flag), later pages load it straight away from the browser cache.
-      Page content never depends on this script; without JS the font loads normally (<noscript>).
-    -->
-    <script is:inline>
-      (function () {
-        var css = '/fonts/milky-han-mono.css';
-        function add() { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = css; document.head.appendChild(l); }
-        try { if (localStorage.getItem('cjk-font') === '1') { add(); return; } } catch (e) {}
-        addEventListener('load', function () {
-          requestAnimationFrame(function () {
-            setTimeout(function () { add(); try { localStorage.setItem('cjk-font', '1'); } catch (e) {} }, 0);
-          });
-        });
-      })();
-    </script>
-    <noscript><link rel="stylesheet" href="/fonts/milky-han-mono.css" /></noscript>
+    <!-- Icons: scripts/build-images.mjs. The 16 px one shows only the chaise (the heart line is too thin at that size). -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <JsonLd data={medicalClinic(settings, locale, Astro.site!)} />
     <slot name="head" />
   </head>

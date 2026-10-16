@@ -6,8 +6,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node scripts/subset-cjk.mjs src && astro dev",
-    "build": "astro build && node scripts/subset-cjk.mjs dist",
+    "dev": "astro dev",
+    "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
     "check:production": "PUBLIC_ALLOW_INDEXING=true astro build --outDir .production-check && node scripts/check-production.mjs .production-check"
@@ -18,10 +18,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@types/node": "^24.19.2",
-    "fontverter": "^2.0.0",
-    "harfbuzzjs": "^1.6.3",
+    "opentype.js": "^1.3.4",
     "sharp": "^0.35.5",
-    "subset-font": "^2.9.0",
     "typescript": "^6.0.3"
   }
 }

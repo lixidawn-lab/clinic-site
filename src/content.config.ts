@@ -149,6 +149,8 @@ const notes = defineCollection({
     sourceDate: isoDate.optional(),
     // Permission to republish the full text (matters for `media`).
     permission: z.boolean().default(false),
+    // Note for the editors (open questions about the article). Never shown on the site.
+    internalNote: z.string().optional(),
   }).refine((n) => n.source === 'original' || (n.sourceSite && n.sourceUrl && n.sourceDate), {
     message: 'Non-original articles need sourceSite, sourceUrl and sourceDate',
   }),

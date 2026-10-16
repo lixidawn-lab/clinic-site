@@ -19,34 +19,41 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 4. 不放患者评价、疗效描述、治疗前后对比。
 5. 不设表单，不收集个人资料。预约只用 WhatsApp `wa.me` 链接（预填中英文问候）和 `tel:` 链接。
 6. 默认 noindex：只有当 `PUBLIC_ALLOW_INDEXING=true` 时才允许收录，否则全站输出 `<meta name="robots" content="noindex,nofollow">`，robots.txt 设为 `Disallow: /`。上线需用户明确确认。
-7. 不复制「窗边有光」的内容。
+7. 窗边有光的文章可以在诊所网站放全文，开头放来源卡片，canonical 指向窗边有光原文（灵晞 2026-10-16 决定，见「文章来源规则」）。
 
 ## 技术栈
 - Astro（最新稳定版）+ TypeScript，全站静态生成，正文不依赖 JS。
 - 样式：原生 CSS + CSS 变量。不使用 Tailwind 和 UI 框架。依赖越少越好。
 - 内容：Astro Content Collections，放在 `src/content/`。schema 用 zod 定义，字段与将来的 Sanity schema 一一对应（第 3 阶段切换）。内容读取统一走 `src/lib/content.ts`，切换 CMS 时只需改这一层。
-- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare（以 Worker 静态资源形式部署），推送 `main` 后自动部署（构建 `npm run build`，部署 `npx wrangler deploy`，配置在 `wrangler.jsonc`，输出 `dist`）。预览站：https://clinic-site.lixi-dawn5.workers.dev ，不设 `PUBLIC_ALLOW_INDEXING`。
+- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare（以 Worker 静态资源形式部署），推送 `main` 后自动部署（构建 `npm run build`，部署 `npx wrangler deploy`，配置在 `wrangler.jsonc`，输出 `dist`）。网址见下方「域名」，不设 `PUBLIC_ALLOW_INDEXING`。
+
+## 域名（临时，2026-10-16）
+- 现在用窗边有光已买的域名下的子域名 **`https://clinic.bythewindow.org`**（`astro.config.mjs` 的默认 `site`，`.env` 的 `SITE_URL` 可以覆盖）。canonical、hreflang、og:url、og:image、sitemap、JSON-LD 都用它。代码里不能出现 `example.com`（`npm run check:production` 会检查）。
+- 备用地址 https://clinic-site.lixi-dawn5.workers.dev 保留。两个地址是同一份构建，现在都是 noindex，canonical 都指向 clinic.bythewindow.org。**开放收录时**要关掉 workers.dev 地址（Worker → Settings → Domains & Routes 里停用），否则它也会变成可以收录。
+- ⚠️ **这个域名是临时的。** 正式开放收录（并提交 MAB 审批）之前，要先决定是否换成诊所自己的域名（`交接/进度.md`「等灵晞决定」）。用子域名而不是 `bythewindow.org/clinic` 子目录的原因：以后搬家只要把整个子域名 301 跳转到新域名，比子目录简单，也不会和窗边有光的页面混在一起。
+- 自定义域名由灵晞在 Cloudflare 上绑定（Worker → Settings → Domains & Routes → Add → Custom domain）。Code 不碰 DNS、证书和账号设置。
 
 ## 双语与 SEO
 - 路由：`/en/...`、`/zh/...`（简体），两种语言共用英文 slug；根路径 `/` 重定向到 `/en/`。
 - 每页都要有：hreflang（`en`、`zh-Hans`，`x-default` 指向 en）、自引用 canonical、唯一的 title 和 description、OG 标签。
 - 语言切换器链接到对应的另一语言页面。
 - JSON-LD：全站 `MedicalClinic`，About 页 `Physician`，文章页 `Article`（author 指向 Physician），FAQ 用 `FAQPage`。数据只取自内容文件，值为 TBC 的字段直接省略。
-- 自动生成包含两种语言的 sitemap。
+- 自动生成包含两种语言的 sitemap（`src/pages/sitemap.xml.ts`，每条带 hreflang；canonical 指向别的网站的文章不列入）。正式站的 robots.txt 引用它。
+- 分享卡片图 `/og/{en,zh}.jpg`（1200×630）在构建时由 `src/pages/og/[lang].jpg.ts` 生成，文章页暂时也用它。网站图标和 `site.webmanifest`：图标由 `scripts/build-images.mjs` 生成，16px 版只保留躺椅造型。
 - 文章页包含：作者署名（链接到 About）、发布日期、审阅日期、「不构成诊断」提示、预约 CTA。
 - 所有 UI 文案放在 `src/i18n/{en,zh}.ts`，组件里不写死文字。
 
 ## 内容模型（src/content）
 - `settings`（单例）：clinicName{en,zh}、tagline（页头名字下的一行）、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、privacyNotice{en,zh}、emergencyNotice、beforeYourVisit、followUpCare、bookingMessage{en,zh}、socialLinks（涵倪之后换成诊所账号）。缺失的值统一写 `"TBC:x.x"`（x.x 是 `docs/checklist.md` 的编号，必须写）。
 - `doctor`（单例）：name、title、qualifications[]、registrations[]、languages{en[],zh[]}（各自的顺序）、experience、bio{en,zh}（lead 是首屏大字；中文使用涵倪提供的原文，不改写）、clinicalInterests[]（带 id，About 页锚点 `/about/#<id>`）、approach、publications[]{title,venue,date,url,role,verified}。只渲染 `verified:true` 的发表。
-- `notes`：title{en,zh}、summary、body（en/zh 各一个 md 文件）、topic、publishedAt、reviewedAt、featured、needsReview，以及来源字段（见「文章来源规则」）。
+- `notes`：title{en,zh}、summary、body（en/zh 各一个 md 文件）、topic、publishedAt、reviewedAt、featured、needsReview、internalNote（给编辑看的备注，不在网站上显示），以及来源字段（见「文章来源规则」）。
 - `sources`：来源网站的 name{en,zh}、description{en,zh}、url。
 - `concerns`：首页「常见困扰」标签，目前都链接到 Doctor's Notes。
 - `services`、`faq`：带 `confirmed` 布尔值；未确认的显示 TBC。
 
 ## 设计令牌（首页定稿，2026-10-16；代码在 `src/styles/tokens.css`）
 - 颜色：品牌绿 `--green:#239242`（大字、图标、线条）；`--green-dark:#1B7A35`（按钮、链接、小字，白字对比 5.4:1）；`--green-deep:#155F29`（链接悬停；浅绿底上的小字，保证 ≥4.5:1）；浅绿底 `--tint:#DCECC8`；暖白 `--bg:#F8F7F2`；正文 `--ink:#344237`；辅助文字 `--muted:#5A6A5E`；`#419538` 只用于插画和装饰。
-- 字体（全部自托管，SIL OFL 1.1，见 `fonts/README.md`）：标题 Poppins（Logo 名字 700，标题和卡片标题 600，首屏介绍 500）；英文正文 Palanquin 400；中文星汉等宽 Milky Han Mono（Regular/Bold，构建时按全站实际用字子集化），备用 Noto Sans SC 和系统字体。
+- 字体（英文字体自托管，SIL OFL 1.1，见 `fonts/README.md`）：标题 Poppins（Logo 名字 700，标题和卡片标题 600，首屏介绍 500）；英文正文 Palanquin 400；中文用访客设备的系统字体（2026-10-16 决定，不下载任何中文字体），顺序为 PingFang SC、Hiragino Sans GB、Noto Sans SC、Source Han Sans SC、Microsoft YaHei、sans-serif（`--font-cjk`）。
 - 字号（桌面 / 手机）：正文 18/17，行高 1.7（中文 1.8），每行 ≤ 640px；H1 44/32（700）；首屏介绍 28/24；栏目标题 32/24（600）；精选文章标题 26，列表标题 20；步骤标题 19、说明 17；按钮 17px，高 ≥ 44px；元信息 ≥ 14px。
 - 间距：版块上下 88–104px（手机 56px）；按钮全站圆角（胶囊形）。移动端优先，触控目标 ≥ 44px，焦点状态清晰可见。
 - 手机端（< 1100px）：顶部吸顶栏（logo、语言、菜单）；底部固定预约栏（WhatsApp + 致电，没有号码就隐藏）。
@@ -61,8 +68,6 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 | blog | 全文，来源卡片指向旧博客原文 | 诊所网站 |
 | chuangbian | 全文 | 指向窗边有光原文（这时不输出 hreflang） |
 | media | `permission: true` 才显示全文；否则只显示摘要和「阅读原文」（预览站标注「待取得转载许可」） | 指向媒体原文 |
-
-- ⚠️ `chuangbian` 允许放全文，与硬性规则 7「不复制窗边有光的内容」冲突，待灵晞决定（见 `交接/进度.md`）。在决定之前，不放窗边有光的文章。
 
 ## 预览站标签（只有一个开关）
 - TBC、「初稿 · 待确认」、「待涵倪审阅」（文章 `needsReview: true`）、「待取得转载许可」都只在预览站显示，统一由 `src/lib/preview.ts` 控制：没开收录时显示，开了收录时（正式站）全部不出现。`PUBLIC_SHOW_PREVIEW_LABELS=true/false` 可以强制显示或隐藏。

@@ -28,6 +28,4 @@ const locale = localeFromParams(Astro.params);
     text-decoration: none;
   }
   .lang-link:hover { color: var(--green-dark); }
-  /* "中文" on English pages: system font, so English pages never download the Chinese web font. */
-  .lang-link:lang(zh) { font-family: var(--font-cjk-system); }
 </style>

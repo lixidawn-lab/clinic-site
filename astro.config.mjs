@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 import { loadEnv } from 'vite';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
-// Placeholder domain until the real one is confirmed. Set SITE_URL in .env.
-const site = env.SITE_URL || 'https://example.com';
+// Temporary domain under 窗边有光's bythewindow.org (CLAUDE.md「域名」). SITE_URL in .env overrides it.
+const site = env.SITE_URL || 'https://clinic.bythewindow.org';
 
 export default defineConfig({
   site,
