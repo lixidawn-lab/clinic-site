@@ -1,10 +1,12 @@
 ---
 // Fixed booking bar (PRD 2.1): "Book an Appointment" opens WhatsApp (wa.me, prefilled greeting);
 // the phone number is shown next to it and dials on tap (tel:). No forms (CLAUDE.md rule 5).
-// While a number is still TBC, the button is shown inert with the TBC marker instead of a broken link.
+// While a number is still TBC, the button is shown inert with the TBC marker instead of a broken link
+// (preview site), or left out entirely (production site, plan A).
 import TBC from './TBC.astro';
 import { localeFromParams, useTranslations } from '../i18n';
 import { telHref, whatsappHref } from '../lib/links';
+import { isShown } from '../lib/tbc';
 import type { Settings } from '../lib/content';
 
 interface Props {
@@ -16,17 +18,21 @@ const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
 const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
 const tel = telHref(settings.phone);
+const showWa = isShown(settings.whatsapp);
+const showTel = isShown(settings.phone);
 ---
-<aside class="booking-cta" aria-label={t.a11y.bookingBar}>
-  <div class="container inner">
-    {wa
-      ? <a class="btn primary" href={wa} rel="noopener" target="_blank">{t.cta.book}</a>
-      : <span class="btn primary is-tbc">{t.cta.book} <TBC value={settings.whatsapp} /></span>}
-    {tel
-      ? <a class="btn secondary" href={tel}>{t.cta.call} {settings.phone}</a>
-      : <span class="btn secondary is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>}
-  </div>
-</aside>
+{(showWa || showTel) && (
+  <aside class="booking-cta" aria-label={t.a11y.bookingBar}>
+    <div class="container inner">
+      {showWa && (wa
+        ? <a class="btn primary" href={wa} rel="noopener" target="_blank">{t.cta.book}</a>
+        : <span class="btn primary is-tbc">{t.cta.book} <TBC value={settings.whatsapp} /></span>)}
+      {showTel && (tel
+        ? <a class="btn secondary" href={tel}>{t.cta.call} {settings.phone}</a>
+        : <span class="btn secondary is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>)}
+    </div>
+  </aside>
+)}
 
 <style>
   /* Sticky (not fixed): the bar keeps its own space at the end of the page, so it can never

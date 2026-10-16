@@ -1,0 +1,79 @@
+[
+  {
+    "id": "should-i-see-a-psychiatrist",
+    "order": 1,
+    "question": {
+      "en": "How do I know if I should see a psychiatrist?",
+      "zh": "我怎么知道自己是否需要看精神科？"
+    },
+    "answer": {
+      "en": "If low mood, anxiety, sleep or attention problems have lasted for weeks and are affecting your work, studies or relationships, it is worth speaking with a psychiatrist. You don’t need to be sure — an assessment is how we find out together.",
+      "zh": "如果情绪低落、焦虑、睡眠或注意力问题持续了几周，并影响到工作、学习或人际关系，就值得找精神科医生谈谈。你不需要先确定答案，评估就是一起弄清楚的过程。"
+    },
+    "confirmed": false
+  },
+  {
+    "id": "referral-letter",
+    "order": 2,
+    "question": { "en": "Do I need a referral letter?", "zh": "需要转诊信吗？" },
+    "answer": { "en": "TBC:2.5", "zh": "TBC:2.5" },
+    "confirmed": false
+  },
+  {
+    "id": "first-visit",
+    "order": 3,
+    "question": { "en": "What happens at the first visit?", "zh": "第一次看诊会做什么？" },
+    "answer": {
+      "en": "Dr. Hanni will ask about your current concerns, your history and what you hope to get help with. If you have a list of current medications or past medical reports, feel free to bring them — but you can come without them.",
+      "zh": "涵倪医生会了解你目前的困扰、过往经历，以及你希望得到哪些帮助。如果有正在服用的药物清单或以往的医疗报告，可以带来；没有也没关系。"
+    },
+    "confirmed": false
+  },
+  {
+    "id": "medication",
+    "order": 4,
+    "question": { "en": "Will I have to take medication?", "zh": "看精神科就一定要吃药吗？" },
+    "answer": {
+      "en": "Not necessarily. Whether medication could help depends on your assessment, and the decision is made together with you.",
+      "zh": "不一定。是否需要药物取决于评估结果，并且由你和医生一起决定。"
+    },
+    "confirmed": false
+  },
+  {
+    "id": "fees",
+    "order": 5,
+    "question": { "en": "How much does a consultation cost?", "zh": "看诊费用是多少？" },
+    "answer": {
+      "en": "Please contact the clinic for current consultation fees.",
+      "zh": "最新的看诊费用请直接联系诊所。"
+    },
+    "confirmed": false
+  },
+  {
+    "id": "companion",
+    "order": 6,
+    "question": { "en": "Can someone come with me?", "zh": "可以请人陪同吗？" },
+    "answer": { "en": "TBC:4.5", "zh": "TBC:4.5" },
+    "confirmed": false
+  },
+  {
+    "id": "confidentiality",
+    "order": 7,
+    "question": { "en": "Will my information be kept confidential?", "zh": "我的资料会保密吗？" },
+    "answer": {
+      "en": "Yes. Your medical information is handled in line with medical confidentiality and Malaysia’s Personal Data Protection Act.",
+      "zh": "会。你的医疗资料按照医疗保密原则和马来西亚个人资料保护法处理。"
+    },
+    "confirmed": false
+  },
+  {
+    "id": "urgent-help",
+    "order": 8,
+    "question": { "en": "What if I need urgent help?", "zh": "如果我需要紧急帮助怎么办？" },
+    "answer": {
+      "en": "This clinic does not provide emergency or crisis services. If you or someone near you is in immediate danger, call 999 or go to the nearest hospital emergency department. You can also call the Ministry of Health’s Talian HEAL 15555 (daily, 8 am to midnight) or Befrienders Kuala Lumpur at 03-7627 2929.",
+      "zh": "本诊所不提供紧急或危机服务。如果你或身边的人有即时危险，请拨打 999 或前往最近的医院急诊部。你也可以联系卫生部心理健康热线 Talian HEAL 15555（每日早上 8 点至午夜），或 Befrienders 吉隆坡 03-7627 2929。"
+    },
+    "confirmed": false
+  }
+]

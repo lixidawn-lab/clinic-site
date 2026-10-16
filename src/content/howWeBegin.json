@@ -1,0 +1,38 @@
+[
+  {
+    "id": "first-consultation",
+    "order": 1,
+    "title": { "en": "First consultation", "zh": "初次咨询" },
+    "body": {
+      "en": "Reach out on WhatsApp or by phone to arrange a time that works for you.",
+      "zh": "通过 WhatsApp 或电话联系诊所，约一个方便的时间。"
+    }
+  },
+  {
+    "id": "understanding-your-concerns",
+    "order": 2,
+    "title": { "en": "Understanding your concerns", "zh": "了解你的困扰" },
+    "body": {
+      "en": "We listen to what you’ve been experiencing, how long it has lasted, and how it affects daily life.",
+      "zh": "聆听你最近的经历、持续了多久，以及对日常生活的影响。"
+    }
+  },
+  {
+    "id": "professional-assessment",
+    "order": 3,
+    "title": { "en": "Professional assessment", "zh": "专业评估" },
+    "body": {
+      "en": "Dr. Hanni carries out a psychiatric assessment to understand what may be going on.",
+      "zh": "涵倪医生进行精神科评估，了解可能的原因。"
+    }
+  },
+  {
+    "id": "planning-your-care",
+    "order": 4,
+    "title": { "en": "Planning your care together", "zh": "一起规划照护" },
+    "body": {
+      "en": "We discuss the options and agree on next steps together, at a pace that feels right for you.",
+      "zh": "一起讨论可行的方案，按你适合的节奏商定下一步。"
+    }
+  }
+]

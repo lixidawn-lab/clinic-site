@@ -1,14 +1,52 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageStub from '../../components/PageStub.astro';
+import ClinicInfo from '../../components/ClinicInfo.astro';
+import Draft from '../../components/Draft.astro';
+import Field from '../../components/Field.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import { localeFromParams, localeStaticPaths, useTranslations } from '../../i18n';
+import { getFaq, getServices, getSettings } from '../../lib/content';
 import { routes } from '../../lib/routes';
+import { faqPage } from '../../lib/schema';
+import { isShown, isTbc } from '../../lib/tbc';
 
 export const getStaticPaths = localeStaticPaths;
 
-const t = useTranslations(localeFromParams(Astro.params));
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
 const page = t.pages.appointments;
+const [settings, services, faq] = await Promise.all([getSettings(), getServices(), getFaq()]);
+const visibleFaq = faq.filter((f) => isShown(f.answer[locale]));
+// Structured data only carries answers that actually exist (TBC answers left out).
+const answeredFaq = faq
+  .filter((f) => !isTbc(f.answer[locale]))
+  .map((f) => ({ question: f.question[locale], answer: f.answer[locale] }));
 ---
 <Base title={page.title} description={page.description} route={routes.appointments} nav="appointments">
-  <PageStub page="appointments" />
+  {answeredFaq.length > 0 && <JsonLd slot="head" data={faqPage(answeredFaq)} />}
+  <div class="container page">
+    <h1>{page.title}</h1>
+
+    <section>
+      <h2>{t.appointments.services}</h2>
+      <ul>
+        {services.map((s) => <li>{s.title[locale]} {!s.confirmed && <Draft />}</li>)}
+      </ul>
+    </section>
+
+    <section>
+      <h2>{t.appointments.faq}</h2>
+      {visibleFaq.map((f) => (
+        <>
+          <h3>{f.question[locale]}</h3>
+          <p><Field value={f.answer[locale]} /></p>
+        </>
+      ))}
+    </section>
+
+    <section>
+      <h2>{t.appointments.clinicInfo}</h2>
+      <ClinicInfo settings={settings} full />
+    </section>
+  </div>
 </Base>

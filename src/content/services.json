@@ -1,0 +1,32 @@
+[
+  {
+    "id": "consultation-assessment",
+    "order": 1,
+    "title": { "en": "Psychiatric consultation and assessment", "zh": "精神科咨询与评估" },
+    "confirmed": false
+  },
+  {
+    "id": "treatment-planning-medication-review",
+    "order": 2,
+    "title": { "en": "Treatment planning and medication review", "zh": "治疗方案讨论与药物复核" },
+    "confirmed": false
+  },
+  {
+    "id": "psychotherapy",
+    "order": 3,
+    "title": { "en": "Psychotherapy and coping strategies", "zh": "心理治疗与应对策略" },
+    "confirmed": false
+  },
+  {
+    "id": "follow-up-care",
+    "order": 4,
+    "title": { "en": "Follow-up and continuing care", "zh": "复诊与持续照护" },
+    "confirmed": false
+  },
+  {
+    "id": "online-consultation",
+    "order": 5,
+    "title": { "en": "Online consultations", "zh": "线上问诊" },
+    "confirmed": false
+  }
+]

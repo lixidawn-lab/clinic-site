@@ -4,9 +4,11 @@ import SeoHead from '../components/SeoHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BookingCta from '../components/BookingCta.astro';
+import JsonLd from '../components/JsonLd.astro';
 import { htmlLang, localeFromParams, useTranslations } from '../i18n';
 import { getSettings } from '../lib/content';
 import { isTbc } from '../lib/tbc';
+import { medicalClinic } from '../lib/schema';
 import type { PageKey } from '../lib/routes';
 
 interface Props {
@@ -32,6 +34,7 @@ const siteName = isTbc(clinicName) ? undefined : clinicName;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <SeoHead title={title} description={description} route={route} siteName={siteName} ogType={ogType} />
+    <JsonLd data={medicalClinic(settings, locale, Astro.site!)} />
     <slot name="head" />
   </head>
   <body>

@@ -2,6 +2,7 @@
 import Field from './Field.astro';
 import { localeFromParams, useTranslations } from '../i18n';
 import { telHref, whatsappHref } from '../lib/links';
+import { isShown } from '../lib/tbc';
 import type { Settings } from '../lib/content';
 
 interface Props {
@@ -16,20 +17,44 @@ const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
 ---
 <footer class="site-footer">
   <div class="container">
-    <p class="name"><Field value={settings.clinicName[locale]} /></p>
+    {isShown(settings.clinicName[locale]) && <p class="name"><Field value={settings.clinicName[locale]} /></p>}
     <dl>
-      <div><dt>{t.footer.address}</dt><dd><Field value={settings.address[locale]} /></dd></div>
-      <div>
-        <dt>{t.footer.phone}</dt>
-        <dd>{tel ? <a href={tel}>{settings.phone}</a> : <Field value={settings.phone} />}</dd>
-      </div>
-      <div>
-        <dt>{t.footer.whatsapp}</dt>
-        <dd>{wa ? <a href={wa} rel="noopener" target="_blank">{settings.whatsapp}</a> : <Field value={settings.whatsapp} />}</dd>
-      </div>
-      <div><dt>{t.footer.hours}</dt><dd><Field value={settings.hours[locale]} /></dd></div>
-      <div><dt>{t.footer.mabApprovalNo}</dt><dd><Field value={settings.mabApprovalNo} /></dd></div>
-      <div><dt>{t.footer.privacy}</dt><dd><Field value={settings.privacyNotice[locale]} /></dd></div>
+      {isShown(settings.address[locale]) && (
+        <div><dt>{t.footer.address}</dt><dd><Field value={settings.address[locale]} /></dd></div>
+      )}
+      {isShown(settings.phone) && (
+        <div>
+          <dt>{t.footer.phone}</dt>
+          <dd>{tel ? <a href={tel}>{settings.phone}</a> : <Field value={settings.phone} />}</dd>
+        </div>
+      )}
+      {isShown(settings.whatsapp) && (
+        <div>
+          <dt>{t.footer.whatsapp}</dt>
+          <dd>{wa ? <a href={wa} rel="noopener" target="_blank">{settings.whatsapp}</a> : <Field value={settings.whatsapp} />}</dd>
+        </div>
+      )}
+      {isShown(settings.hours[locale]) && (
+        <div><dt>{t.footer.hours}</dt><dd><Field value={settings.hours[locale]} /></dd></div>
+      )}
+      {isShown(settings.mabApprovalNo) && (
+        <div><dt>{t.footer.mabApprovalNo}</dt><dd><Field value={settings.mabApprovalNo} /></dd></div>
+      )}
+      {isShown(settings.privacyNotice[locale]) && (
+        <div><dt>{t.footer.privacy}</dt><dd><Field value={settings.privacyNotice[locale]} /></dd></div>
+      )}
+      {settings.socialLinks.length > 0 && (
+        <div>
+          <dt>{t.footer.social}</dt>
+          <dd>
+            <ul class="social">
+              {settings.socialLinks.map((s) => (
+                <li><a href={s.url} rel="noopener me" target="_blank">{t.social[s.platform]}</a></li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      )}
     </dl>
   </div>
 </footer>
@@ -45,4 +70,5 @@ const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
   dt { font-weight: 600; }
   dd { margin: 0; white-space: pre-line; }
   a { display: inline-flex; align-items: center; min-height: var(--tap); }
+  .social { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 16px; }
 </style>

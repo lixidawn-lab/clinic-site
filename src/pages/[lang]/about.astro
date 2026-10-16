@@ -1,14 +1,70 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageStub from '../../components/PageStub.astro';
-import { localeFromParams, localeStaticPaths, useTranslations } from '../../i18n';
+import JsonLd from '../../components/JsonLd.astro';
+import NoteList from '../../components/NoteList.astro';
+import { localeFromParams, localeStaticPaths, localizedPath, useTranslations } from '../../i18n';
+import { getDoctor, getNotes, getSettings } from '../../lib/content';
+import { paragraphs } from '../../lib/format';
 import { routes } from '../../lib/routes';
+import { physician } from '../../lib/schema';
 
 export const getStaticPaths = localeStaticPaths;
 
-const t = useTranslations(localeFromParams(Astro.params));
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
 const page = t.pages.about;
+const [settings, doctor, notes] = await Promise.all([getSettings(), getDoctor(), getNotes()]);
+const bio = doctor.bio[locale];
+const publications = doctor.publications.filter((p) => p.verified);
 ---
 <Base title={page.title} description={page.description} route={routes.about} nav="about">
-  <PageStub page="about" />
+  <JsonLd slot="head" data={physician(doctor, settings, locale, Astro.site!)} />
+  <div class="container page">
+    <h1>{doctor.name[locale]}</h1>
+    <p>{doctor.title[locale]}</p>
+    <p><strong>{bio.lead}</strong></p>
+    {paragraphs(bio.body).map((p) => <p>{p}</p>)}
+
+    <section>
+      <h2>{t.about.background}</h2>
+      <h3>{t.about.qualifications}</h3>
+      <ul>{doctor.qualifications.map((q) => <li>{q[locale]}</li>)}</ul>
+      {doctor.showRegistrations && (
+        <>
+          <h3>{t.about.registrations}</h3>
+          <ul>{doctor.registrations.map((r) => <li>{r[locale]}</li>)}</ul>
+        </>
+      )}
+      <h3>{t.about.experience}</h3>
+      <p>{doctor.experience[locale]}</p>
+      {doctor.alsoPractises.show && <p>{doctor.alsoPractises.name[locale]}</p>}
+      <h3>{t.about.languages}</h3>
+      <ul>{doctor.languages.map((l) => <li>{l[locale]}</li>)}</ul>
+    </section>
+
+    <section>
+      <h2>{t.about.clinicalInterests}</h2>
+      <ul>{doctor.clinicalInterests.map((i) => <li>{i[locale]}</li>)}</ul>
+    </section>
+
+    {doctor.approach && (
+      <section>
+        <h2>{t.about.approach}</h2>
+        <p>{doctor.approach[locale]}</p>
+      </section>
+    )}
+
+    <section>
+      <h2>{t.about.stories}</h2>
+      <NoteList notes={notes.slice(0, 3)} />
+      <p><a href={localizedPath(locale, routes.notes)}>{t.home.allNotes}</a></p>
+    </section>
+
+    {publications.length > 0 && (
+      <section>
+        <h2>{t.about.publications}</h2>
+        <ul>{publications.map((p) => <li>{p.url ? <a href={p.url}>{p.title}</a> : p.title} · {p.venue} · {p.date}</li>)}</ul>
+      </section>
+    )}
+  </div>
 </Base>

@@ -1,7 +1,13 @@
 {
   "site": {
-    "clinicName": { "en": "TBC:3.1", "zh": "TBC:3.1" },
-    "address": { "en": "TBC:3.2", "zh": "TBC:3.2" },
+    "clinicName": {
+      "en": "Dr. Lau Harn Ni Psychiatry Specialist Clinic",
+      "zh": "刘涵倪精神科专科诊所"
+    },
+    "address": {
+      "en": "Ground Floor, No. 27, Jalan PS1, Plaza Semabok, 75050 Melaka, Malaysia",
+      "zh": "马来西亚马六甲 Plaza Semabok，Jalan PS1 27 号底楼，邮编 75050"
+    },
     "phone": "TBC:3.3",
     "whatsapp": "TBC:2.1",
     "hours": { "en": "TBC:3.4", "zh": "TBC:3.4" },
@@ -11,6 +17,14 @@
     "payment": { "en": "TBC:3.7", "zh": "TBC:3.7" },
     "mabApprovalNo": "TBC:1.5",
     "privacyNotice": { "en": "TBC:1.6", "zh": "TBC:1.6" },
-    "bookingMessage": { "en": "TBC:2.1", "zh": "TBC:2.1" }
+    "bookingMessage": {
+      "en": "Hello, I found the clinic's website and would like to book an appointment with Dr. Lau Harn Ni.",
+      "zh": "您好，我在诊所网站上看到信息，想预约刘涵倪医生的门诊。"
+    },
+    "socialLinks": [
+      { "platform": "instagram", "url": "https://www.instagram.com/sunlit.corner" },
+      { "platform": "youtube", "url": "https://youtube.com/@shining-hd5dg" },
+      { "platform": "facebook", "url": "https://www.facebook.com/profile.php?id=61558786962707" }
+    ]
   }
 }

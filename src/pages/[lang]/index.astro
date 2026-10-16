@@ -1,14 +1,48 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageStub from '../../components/PageStub.astro';
-import { localeFromParams, localeStaticPaths, useTranslations } from '../../i18n';
+import ClinicInfo from '../../components/ClinicInfo.astro';
+import NoteList from '../../components/NoteList.astro';
+import { localeFromParams, localeStaticPaths, localizedPath, useTranslations } from '../../i18n';
+import { getDoctor, getHowWeBegin, getNotes, getSettings } from '../../lib/content';
 import { routes } from '../../lib/routes';
 
 export const getStaticPaths = localeStaticPaths;
 
-const t = useTranslations(localeFromParams(Astro.params));
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
 const page = t.pages.home;
+const [settings, doctor, steps, notes] = await Promise.all([getSettings(), getDoctor(), getHowWeBegin(), getNotes()]);
 ---
 <Base title={page.title} description={page.description} route={routes.home} nav="home">
-  <PageStub page="home" />
+  <div class="container page">
+    <h1>{doctor.name[locale]}</h1>
+    <p>{doctor.title[locale]}</p>
+    <p>{doctor.bio[locale].lead}</p>
+    <p><a href={localizedPath(locale, routes.about)}>{t.home.aboutLink}</a></p>
+
+    <section>
+      <h2>{t.home.areasOfFocus}</h2>
+      <ul>{doctor.clinicalInterests.map((i) => <li>{i[locale]}</li>)}</ul>
+    </section>
+
+    <section>
+      <h2>{t.home.howWeBegin}</h2>
+      <ol>
+        {steps.map((s) => (
+          <li><strong>{s.title[locale]}</strong><br />{s.body[locale]}</li>
+        ))}
+      </ol>
+    </section>
+
+    <section>
+      <h2>{t.home.latestNotes}</h2>
+      <NoteList notes={notes.slice(0, 3)} />
+      <p><a href={localizedPath(locale, routes.notes)}>{t.home.allNotes}</a></p>
+    </section>
+
+    <section>
+      <h2>{t.home.clinicInfo}</h2>
+      <ClinicInfo settings={settings} />
+    </section>
+  </div>
 </Base>

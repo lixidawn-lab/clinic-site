@@ -1,0 +1,58 @@
+---
+// Article page (PRD 3.3): byline linking to About, published / reviewed dates, "not a diagnosis" notice, booking CTA.
+// An English page without an English body shows the title and summary and points to the Chinese article.
+import Base from '../../../layouts/Base.astro';
+import JsonLd from '../../../components/JsonLd.astro';
+import { localeFromParams, locales, localizedPath, useTranslations } from '../../../i18n';
+import { getDoctor, getNoteBody, getNotes } from '../../../lib/content';
+import { formatDate } from '../../../lib/format';
+import { routes } from '../../../lib/routes';
+import { article } from '../../../lib/schema';
+
+export async function getStaticPaths() {
+  const notes = await getNotes();
+  return locales.flatMap((lang) => notes.map((note) => ({ params: { lang, slug: note.slug }, props: { note } })));
+}
+
+const { note } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const doctor = await getDoctor();
+const Body = await getNoteBody(note, locale);
+const bodyLocale = note.bodyLocales[0];
+const route = `${routes.notes}/${note.slug}`;
+---
+<Base title={note.title[locale]} description={note.summary[locale]} route={route} nav="notes" ogType="article">
+  {Body && <JsonLd slot="head" data={article(note, doctor, locale, Astro.site!)} />}
+  <article class="container page">
+    <h1>{note.title[locale]}</h1>
+    <p class="meta">
+      {t.notes.byline} <a href={localizedPath(locale, routes.about)}>{doctor.name[locale]}</a><br />
+      {t.notes.published}: <time datetime={note.publishedAt}>{formatDate(note.publishedAt, locale)}</time>
+      {note.reviewedAt && <><br />{t.notes.reviewed}: <time datetime={note.reviewedAt}>{formatDate(note.reviewedAt, locale)}</time></>}
+      <br />{t.notes.topic}: {t.notes.topics[note.topic]}
+    </p>
+
+    {Body
+      ? <div class="body"><Body /></div>
+      : (
+        <>
+          <p>{note.summary[locale]}</p>
+          <p><strong>{t.notes.inChinese}</strong> — {t.notes.inChineseNotice}</p>
+          {bodyLocale && (
+            <p><a href={localizedPath(bodyLocale, route)} hreflang="zh-Hans">{t.notes.readInChinese}</a></p>
+          )}
+        </>
+      )}
+
+    <aside class="notice">
+      <p>{t.notes.disclaimer}</p>
+      <p>{t.notes.bookPrompt} <a href={localizedPath(locale, routes.appointments)}>{t.cta.book}</a></p>
+    </aside>
+  </article>
+</Base>
+
+<style>
+  .meta { font-size: 0.875rem; }
+  .notice { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--tint); }
+</style>

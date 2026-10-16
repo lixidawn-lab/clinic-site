@@ -1,0 +1,54 @@
+{
+  "doctor": {
+    "name": { "en": "Dr. Lau Harn Ni", "zh": "刘涵倪医生" },
+    "title": { "en": "Psychiatrist", "zh": "精神科专科医生" },
+    "qualifications": [
+      {
+        "en": "MBBS, AIMST University (2011)",
+        "zh": "内外全科医学士，AIMST 大学（2011）"
+      },
+      {
+        "en": "Doctor of Psychiatry (DrPsych), Universiti Kebangsaan Malaysia (2021)",
+        "zh": "精神医学博士，马来西亚国民大学（2021）"
+      }
+    ],
+    "registrations": [
+      { "en": "MMC Full Registration No. 59390", "zh": "马来西亚医药理事会正式注册号 59390" },
+      { "en": "National Specialist Register No. 139747", "zh": "国家专科医生名册编号 139747" }
+    ],
+    "showRegistrations": true,
+    "languages": [
+      { "en": "English", "zh": "英语" },
+      { "en": "Bahasa Malaysia", "zh": "马来语" },
+      { "en": "Mandarin", "zh": "华语" },
+      { "en": "Cantonese", "zh": "广东话" }
+    ],
+    "experience": {
+      "en": "10+ years in public and private hospitals in Malaysia",
+      "zh": "在马来西亚公立及私立医院执业逾 10 年"
+    },
+    "alsoPractises": {
+      "name": { "en": "Pantai Hospital Melaka", "zh": "马六甲班台医院" },
+      "show": false
+    },
+    "bio": {
+      "en": {
+        "lead": "I’m a psychiatrist who listens closely. For more than ten years I’ve cared for patients in Malaysia’s public and private hospitals, combining medication with psychotherapy to find what fits each person.",
+        "body": "I trained in psychiatry at Universiti Kebangsaan Malaysia, with a particular interest in adolescent mental health, mindfulness, DBT, CBT and trauma-focused CBT. Through my writing I share mental health knowledge and stories from the clinic — so we can learn from each other’s experiences, and pass on the encouragement we find."
+      },
+      "zh": {
+        "lead": "我是涵倪，一个用心倾听患者的心理医生（精神科医生）。",
+        "body": "毕业于马来西亚国立大学精神科，在精神科领域拥有超过10年经验\n\n精通中、英、粤语\n\n擅长青少年心理健康、正念治疗、辩证行为治疗、认知行为治疗、创伤聚焦认知行为治疗、压力与情绪管理。\n\n我会在这里分享心理健康及心理疾病/精神类疾病的知识科普。我也有很多很多故事要分享，分享患者和我那些感动点滴。但我其实更希望屏幕前的你，也能一起体会心理治疗的奇妙旅程。人类其实与生俱来就有一种天赋，那就是透过观摩而间接学习的能力。你不需要经历所有的坑坑洼洼，跌倒以后才来清醒。其实我们都可能会在别人的故事里，获得启示，避免踩坑。如果刚好有打动你的故事，也希望你会把这份治愈的种子，转送给更多人。"
+      }
+    },
+    "clinicalInterests": [
+      { "en": "Adolescent mental health", "zh": "青少年心理健康" },
+      { "en": "Mindfulness-based therapy", "zh": "正念治疗" },
+      { "en": "Dialectical behaviour therapy (DBT)", "zh": "辩证行为治疗（DBT）" },
+      { "en": "Cognitive behavioural therapy (CBT)", "zh": "认知行为治疗（CBT）" },
+      { "en": "Trauma-focused CBT (TF-CBT)", "zh": "创伤聚焦认知行为治疗（TF-CBT）" },
+      { "en": "Stress and emotion management", "zh": "压力与情绪管理" }
+    ],
+    "publications": []
+  }
+}

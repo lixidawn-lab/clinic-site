@@ -1,0 +1,58 @@
+---
+// Clinic details as a plain list. `full` adds map, parking, fees and payment (Appointments & Clinic page).
+// Empty (TBC) rows show the marker on the preview site and disappear in production (plan A).
+import Field from './Field.astro';
+import { localeFromParams, useTranslations } from '../i18n';
+import { telHref, whatsappHref } from '../lib/links';
+import { isShown, isTbc } from '../lib/tbc';
+import type { Settings } from '../lib/content';
+
+interface Props {
+  settings: Settings;
+  full?: boolean;
+}
+
+const { settings, full = false } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const tel = telHref(settings.phone);
+const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
+
+type Row = { label: string; value: string; href?: string | null; external?: boolean };
+const rows: Row[] = [
+  { label: t.footer.address, value: settings.address[locale] },
+  { label: t.footer.phone, value: settings.phone, href: tel },
+  { label: t.footer.whatsapp, value: settings.whatsapp, href: wa, external: true },
+  { label: t.footer.hours, value: settings.hours[locale] },
+  ...(full
+    ? [
+        { label: t.appointments.map, value: settings.mapUrl, href: isTbc(settings.mapUrl) ? null : settings.mapUrl, external: true },
+        { label: t.appointments.parking, value: settings.parking[locale] },
+        { label: t.appointments.fees, value: settings.fees[locale] },
+        { label: t.appointments.payment, value: settings.payment[locale] },
+      ]
+    : []),
+].filter((r) => isShown(r.value));
+---
+<div class="clinic-info">
+{isShown(settings.clinicName[locale]) && <p class="name"><Field value={settings.clinicName[locale]} /></p>}
+<dl>
+  {rows.map((r) => (
+    <div>
+      <dt>{r.label}</dt>
+      <dd>
+        {r.href
+          ? <a href={r.href} {...(r.external ? { rel: 'noopener', target: '_blank' } : {})}>{r.value}</a>
+          : <Field value={r.value} />}
+      </dd>
+    </div>
+  ))}
+</dl>
+</div>
+
+<style>
+  .name { margin: 0 0 12px; font-weight: 600; }
+  dl { margin: 0; display: grid; gap: 12px; }
+  dt { font-weight: 600; }
+  dd { margin: 0; white-space: pre-line; }
+</style>

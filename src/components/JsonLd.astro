@@ -1,0 +1,9 @@
+---
+// Structured data (schema.org). Values come only from content files; TBC values are left out.
+interface Props {
+  data: Record<string, unknown>;
+}
+// "<" is escaped so content can never close the <script> tag early.
+const json = JSON.stringify({ '@context': 'https://schema.org', ...Astro.props.data }).replace(/</g, '\\u003c');
+---
+<script type="application/ld+json" set:html={json} />

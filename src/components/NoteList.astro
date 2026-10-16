@@ -1,0 +1,37 @@
+---
+// Plain list of notes: title (link), topic, date, summary. English pages flag Chinese-only articles.
+import { localeFromParams, localizedPath, useTranslations } from '../i18n';
+import { formatDate } from '../lib/format';
+import { routes } from '../lib/routes';
+import type { Note } from '../lib/content';
+
+interface Props {
+  notes: Note[];
+  /** Heading level of each note title. */
+  level?: 'h2' | 'h3';
+}
+
+const { notes, level = 'h3' } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const Heading = level;
+---
+<ul class="note-list">
+  {notes.map((note) => (
+    <li>
+      <Heading class="title"><a href={localizedPath(locale, `${routes.notes}/${note.slug}`)}>{note.title[locale]}</a></Heading>
+      <p class="meta">
+        {t.notes.topics[note.topic]} · <time datetime={note.publishedAt}>{formatDate(note.publishedAt, locale)}</time>
+        {!note.bodyLocales.includes(locale) && <> · {t.notes.inChinese}</>}
+      </p>
+      <p>{note.summary[locale]}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .note-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; }
+  .title { margin: 0; font-size: 1.125rem; }
+  .meta { margin: 4px 0; font-size: 0.875rem; }
+  p { margin: 0; }
+</style>

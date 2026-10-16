@@ -50,3 +50,9 @@ img { max-width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+/* Plain content layout until the page batches apply the design system (placeholder, not a visual design). */
+.page { padding-block: 32px; }
+.page > * { max-width: var(--measure); }
+.page section { margin-top: 40px; }
+.page h1 { margin-top: 0; }
