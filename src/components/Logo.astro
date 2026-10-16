@@ -1,0 +1,16 @@
+---
+// Clinic logo (decorative: always next to the clinic / doctor name). Files: scripts/build-images.mjs.
+interface Props {
+  /** Displayed size in CSS px. */
+  size: number;
+  class?: string;
+}
+const { size, class: className } = Astro.props;
+const files = [96, 144, 240];
+const srcset = (ext: string) => files.map((w) => `/images/clinic-logo-${w}.${ext} ${w}w`).join(', ');
+const sizes = `${size}px`;
+---
+<picture class={className}>
+  <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />
+  <img src="/images/clinic-logo-96.png" srcset={srcset('png')} sizes={sizes} width={size} height={size} alt="" decoding="async" />
+</picture>

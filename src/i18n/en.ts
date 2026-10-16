@@ -2,11 +2,16 @@
 // Clinic facts (name, address, hours…) do NOT belong here — they live in src/content.
 export const en = {
   langName: 'English',
+  /** Shown in the header language switcher. */
+  langShort: 'EN',
   a11y: {
     skipToContent: 'Skip to main content',
     mainNav: 'Main',
+    menu: 'Open menu',
+    home: 'Home',
     switchLanguage: 'Read this page in English',
     bookingBar: 'Book an Appointment',
+    social: 'Social media',
   },
   nav: {
     home: 'Home',
@@ -18,35 +23,45 @@ export const en = {
   cta: {
     book: 'Book an Appointment',
     call: 'Call',
+    whatsappBook: 'Book on WhatsApp',
+    whatsappClinic: 'WhatsApp the clinic',
   },
   footer: {
-    address: 'Address',
-    phone: 'Phone',
-    whatsapp: 'WhatsApp',
-    hours: 'Opening hours',
     mabApprovalNo: 'MAB approval no.',
     privacy: 'Privacy notice',
-    social: 'Follow Dr. Hanni',
   },
   social: {
     instagram: 'Instagram',
     youtube: 'YouTube',
     facebook: 'Facebook',
   },
+  // Rendered as "待补充 · TBC 3.4" (checklist number appended).
   tbc: {
-    label: '待补充 · TBC',
+    label: '待补充',
   },
-  // Preview-only marker for drafted content Hanni hasn't confirmed yet (same text in both languages, like TBC).
-  draft: {
-    label: '初稿 · 待确认 · Draft',
+  // Preview-only labels (same text in both languages, like TBC). Never shown in production.
+  preview: {
+    draft: '初稿 · 待确认 · Draft',
+    review: '待涵倪审阅 · Pending Hanni’s review',
+    permission: '待取得转载许可 · Permission pending',
+  },
+  credentials: {
+    experience: 'Experience',
+    languages: 'Languages',
   },
   home: {
-    areasOfFocus: 'Areas of Focus',
-    howWeBegin: 'How We Begin',
-    latestNotes: 'Latest Doctor’s Notes',
-    allNotes: 'All notes',
-    clinicInfo: 'Clinic Information',
     aboutLink: 'More about Hanni',
+    notesKicker: 'Doctor’s Notes',
+    notesTitle: 'Clinical reflections from Dr. Hanni',
+    allNotes: 'All notes',
+    readNote: 'Read the note',
+    areasOfFocus: 'Areas of Focus',
+    concerns: 'Common Concerns',
+    concernsIntro: 'Starting points to help you recognise what you’re going through — not a diagnosis.',
+    howWeBegin: 'How we begin',
+    visit: 'Visit the clinic',
+    visitIntro: 'Message us on WhatsApp or call the clinic to arrange a first consultation.',
+    directions: 'Get directions',
   },
   about: {
     background: 'Professional Background',
@@ -62,6 +77,8 @@ export const en = {
   notes: {
     featured: 'Featured',
     latest: 'Latest Articles',
+    topicsTitle: 'Topics',
+    publishedElsewhere: 'Published Elsewhere',
     topics: {
       emotions: 'Emotions & mental health',
       symptoms: 'Understanding symptoms & concerns',
@@ -71,26 +88,36 @@ export const en = {
     byline: 'By',
     published: 'Published',
     reviewed: 'Last reviewed',
-    topic: 'Topic',
     inChinese: 'Article in Chinese',
     inChineseNotice: 'This article is currently available in Chinese only.',
     readInChinese: 'Read the article in Chinese',
+    // Source card. {source} and {date} are filled in.
+    originallyPublished: 'Originally published in {source}, {date}',
+    readOriginal: 'Read the original',
     disclaimer: 'This article is for general information and is not a diagnosis. If you are worried about your own situation, please speak with a doctor.',
     bookPrompt: 'Want to talk it through with Dr. Hanni?',
   },
   appointments: {
     services: 'Services',
+    firstVisit: 'Your First Visit',
+    beforeVisit: 'Before Your Visit',
+    followUp: 'Follow-up Care',
     faq: 'Frequently Asked Questions',
     clinicInfo: 'Clinic Information',
+    address: 'Address',
+    phone: 'Phone',
+    whatsapp: 'WhatsApp',
+    hours: 'Opening hours',
     map: 'Map',
     parking: 'Parking & access',
     fees: 'Fees',
     payment: 'Payment methods',
+    book: 'Book an Appointment',
   },
-  // Per-page <title> and meta description, from the page purposes in PRD 3. The page batches may refine them.
+  // Per-page <title> and meta description, from the page purposes in PRD 3.
   pages: {
     home: {
-      title: 'Home',
+      title: 'Psychiatrist in Melaka',
       description: 'Dr. Lau Harn Ni’s psychiatry clinic in Melaka, Malaysia. Get to know her background and areas of focus, read her notes, and book an appointment.',
     },
     about: {

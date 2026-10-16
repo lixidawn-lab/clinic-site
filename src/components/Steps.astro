@@ -1,0 +1,39 @@
+---
+// Numbered steps on the green band ("How we begin" / "Your First Visit").
+import { localeFromParams } from '../i18n';
+
+interface Props {
+  steps: { title: { en: string; zh: string }; body: { en: string; zh: string } }[];
+}
+const locale = localeFromParams(Astro.params);
+---
+<ol class="steps">
+  {Astro.props.steps.map((s, i) => (
+    <li>
+      <span class="num">{String(i + 1).padStart(2, '0')}</span>
+      <h3 class="step-title">{s.title[locale]}</h3>
+      <p>{s.body[locale]}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px 40px;
+  }
+  li { border-top: 2px solid var(--green); padding-top: 14px; }
+  /* Small text on the green band uses the deeper green to stay ≥ 4.5:1. */
+  .num { font-family: var(--font-heading); font-size: var(--text-meta); font-weight: 600; color: var(--green-deep); }
+  .step-title { margin: 4px 0 0; font-size: var(--title-step); line-height: 1.4; }
+  p { margin: 6px 0 0; font-size: var(--text-step); line-height: 1.6; }
+  @media (min-width: 860px) {
+    li { padding-top: 20px; }
+    .step-title { margin-top: 6px; }
+    p { margin-top: 8px; }
+  }
+</style>

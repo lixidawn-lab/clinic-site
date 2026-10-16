@@ -1,0 +1,17 @@
+---
+// "Topic · 16 July 2024" (+ "Article in Chinese" on English pages without an English body).
+import { localeFromParams, useTranslations } from '../i18n';
+import { formatDate } from '../lib/format';
+import type { Note } from '../lib/content';
+
+interface Props {
+  note: Note;
+}
+const { note } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+---
+<span class="meta">
+  {t.notes.topics[note.topic]} · <time datetime={note.publishedAt}>{formatDate(note.publishedAt, locale)}</time>
+  {!note.bodyLocales.includes(locale) && <> · {t.notes.inChinese}</>}
+</span>

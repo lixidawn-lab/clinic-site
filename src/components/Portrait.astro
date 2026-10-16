@@ -1,0 +1,28 @@
+---
+// Dr. Hanni's portrait (WebP + JPEG fallback, files from scripts/build-images.mjs).
+// `priority` for the photo at the top of the page (it is usually the largest thing on screen).
+interface Props {
+  alt: string;
+  /** CSS `sizes` value: how wide the photo is shown. */
+  sizes: string;
+  priority?: boolean;
+  class?: string;
+}
+const { alt, sizes, priority = false, class: className } = Astro.props;
+const widths = [480, 720, 960];
+const srcset = (ext: string) => widths.map((w) => `/images/hanni-portrait-${w}.${ext} ${w}w`).join(', ');
+---
+<picture class={className}>
+  <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />
+  <img
+    src="/images/hanni-portrait-720.jpg"
+    srcset={srcset('jpg')}
+    sizes={sizes}
+    width="2012"
+    height="2083"
+    alt={alt}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : undefined}
+    decoding={priority ? 'sync' : 'async'}
+  />
+</picture>

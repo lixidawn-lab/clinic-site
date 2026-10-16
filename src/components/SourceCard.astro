@@ -1,0 +1,50 @@
+---
+// Source card at the top of a republished article (CLAUDE.md「文章来源规则」):
+// "Originally published in <source>, <date>", a prominent "Read the original →" button,
+// and the one-or-two-sentence introduction of the source website (src/content/sources.json).
+import PreviewLabel from './PreviewLabel.astro';
+import { localeFromParams, useTranslations } from '../i18n';
+import { fill, formatDate } from '../lib/format';
+import { external } from '../lib/links';
+import { noteSourceRules, type Note } from '../lib/content';
+
+interface Props {
+  note: Note;
+}
+const { note } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const site = note.sourceSite;
+const { fullText } = noteSourceRules(note);
+---
+{site && note.sourceUrl && note.sourceDate && (
+  <aside class="source-card" aria-label={site.name[locale]}>
+    <p class="origin">
+      {fill(t.notes.originallyPublished, { source: site.name[locale], date: formatDate(note.sourceDate, locale) })}
+      {!fullText && <> <PreviewLabel kind="permission" /></>}
+    </p>
+    <p class="about-source">{site.description[locale]}</p>
+    <a class="btn btn-primary" href={note.sourceUrl} {...external}>{t.notes.readOriginal} →</a>
+  </aside>
+)}
+
+<style>
+  .source-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: var(--measure);
+    margin: 0 0 32px;
+    padding: 20px;
+    border-radius: var(--radius-card);
+    background: var(--tint);
+  }
+  p { margin: 0; }
+  .origin { font-weight: 600; }
+  .about-source { font-size: var(--text-small); }
+  .btn { margin-top: 6px; }
+  @media (min-width: 860px) {
+    .source-card { padding: 24px 28px; }
+  }
+</style>

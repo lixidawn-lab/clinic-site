@@ -1,7 +1,13 @@
 {
   "doctor": {
-    "name": { "en": "Dr. Lau Harn Ni", "zh": "刘涵倪医生" },
-    "title": { "en": "Psychiatrist", "zh": "精神科专科医生" },
+    "name": {
+      "en": "Dr. Lau Harn Ni",
+      "zh": "刘涵倪医生"
+    },
+    "title": {
+      "en": "Psychiatrist in Melaka · Doctor of Psychiatry (UKM)",
+      "zh": "马六甲精神科专科医生 · 马来西亚国立大学精神医学博士"
+    },
     "qualifications": [
       {
         "en": "MBBS, AIMST University (2011)",
@@ -9,32 +15,61 @@
       },
       {
         "en": "Doctor of Psychiatry (DrPsych), Universiti Kebangsaan Malaysia (2021)",
-        "zh": "精神医学博士，马来西亚国民大学（2021）"
+        "zh": "精神医学博士，马来西亚国立大学（2021）"
       }
     ],
     "registrations": [
-      { "en": "MMC Full Registration No. 59390", "zh": "马来西亚医药理事会正式注册号 59390" },
-      { "en": "National Specialist Register No. 139747", "zh": "国家专科医生名册编号 139747" }
+      {
+        "label": {
+          "en": "MMC Full Registration No.",
+          "zh": "马来西亚医药理事会正式注册号"
+        },
+        "shortLabel": {
+          "en": "MMC Reg.",
+          "zh": "MMC 注册号"
+        },
+        "number": "59390"
+      },
+      {
+        "label": {
+          "en": "National Specialist Register No.",
+          "zh": "国家专科医生名册编号"
+        },
+        "shortLabel": {
+          "en": "NSR No.",
+          "zh": "NSR 编号"
+        },
+        "number": "139747"
+      }
     ],
     "showRegistrations": true,
-    "languages": [
-      { "en": "English", "zh": "英语" },
-      { "en": "Bahasa Malaysia", "zh": "马来语" },
-      { "en": "Mandarin", "zh": "华语" },
-      { "en": "Cantonese", "zh": "广东话" }
-    ],
+    "languages": {
+      "en": [
+        "English",
+        "Mandarin",
+        "Cantonese"
+      ],
+      "zh": [
+        "华语",
+        "英语",
+        "粤语"
+      ]
+    },
     "experience": {
-      "en": "10+ years in public and private hospitals in Malaysia",
-      "zh": "在马来西亚公立及私立医院执业逾 10 年"
+      "en": "10+ years, public & private hospitals",
+      "zh": "10 年以上，公立及私立医院"
     },
     "alsoPractises": {
-      "name": { "en": "Pantai Hospital Melaka", "zh": "马六甲班台医院" },
+      "name": {
+        "en": "Pantai Hospital Melaka",
+        "zh": "马六甲班台医院"
+      },
       "show": false
     },
     "bio": {
       "en": {
-        "lead": "I’m a psychiatrist who listens closely. For more than ten years I’ve cared for patients in Malaysia’s public and private hospitals, combining medication with psychotherapy to find what fits each person.",
-        "body": "I trained in psychiatry at Universiti Kebangsaan Malaysia, with a particular interest in adolescent mental health, mindfulness, DBT, CBT and trauma-focused CBT. Through my writing I share mental health knowledge and stories from the clinic — so we can learn from each other’s experiences, and pass on the encouragement we find."
+        "lead": "I’m a psychiatrist who listens closely.",
+        "body": "For more than ten years I’ve cared for patients in Malaysia’s public and private hospitals, combining medication with psychotherapy to find what fits each person.\n\nI trained in psychiatry at Universiti Kebangsaan Malaysia, with a particular interest in adolescent mental health, mindfulness, DBT, CBT and trauma-focused CBT. Through my writing I share mental health knowledge and stories from the clinic — so we can learn from each other’s experiences, and pass on the encouragement we find."
       },
       "zh": {
         "lead": "我是涵倪，一个用心倾听患者的心理医生（精神科医生）。",
@@ -42,12 +77,36 @@
       }
     },
     "clinicalInterests": [
-      { "en": "Adolescent mental health", "zh": "青少年心理健康" },
-      { "en": "Mindfulness-based therapy", "zh": "正念治疗" },
-      { "en": "Dialectical behaviour therapy (DBT)", "zh": "辩证行为治疗（DBT）" },
-      { "en": "Cognitive behavioural therapy (CBT)", "zh": "认知行为治疗（CBT）" },
-      { "en": "Trauma-focused CBT (TF-CBT)", "zh": "创伤聚焦认知行为治疗（TF-CBT）" },
-      { "en": "Stress and emotion management", "zh": "压力与情绪管理" }
+      {
+        "id": "adolescent-mental-health",
+        "en": "Adolescent mental health",
+        "zh": "青少年心理健康"
+      },
+      {
+        "id": "mindfulness",
+        "en": "Mindfulness-based therapy",
+        "zh": "正念治疗"
+      },
+      {
+        "id": "dbt",
+        "en": "Dialectical behaviour therapy (DBT)",
+        "zh": "辩证行为治疗（DBT）"
+      },
+      {
+        "id": "cbt",
+        "en": "Cognitive behavioural therapy (CBT)",
+        "zh": "认知行为治疗（CBT）"
+      },
+      {
+        "id": "tf-cbt",
+        "en": "Trauma-focused CBT (TF-CBT)",
+        "zh": "创伤聚焦认知行为治疗（TF-CBT）"
+      },
+      {
+        "id": "stress-and-emotion",
+        "en": "Stress and emotion management",
+        "zh": "压力与情绪管理"
+      }
     ],
     "publications": []
   }

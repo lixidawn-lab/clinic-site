@@ -1,11 +1,11 @@
 ---
-// Fixed booking bar (PRD 2.1): "Book an Appointment" opens WhatsApp (wa.me, prefilled greeting);
-// the phone number is shown next to it and dials on tap (tel:). No forms (CLAUDE.md rule 5).
-// While a number is still TBC, the button is shown inert with the TBC marker instead of a broken link
-// (preview site), or left out entirely (production site, plan A).
+// Booking bar fixed to the bottom of the screen on phones and tablets (< 1100px; desktop has the header button).
+// "WhatsApp" opens wa.me with the prefilled greeting (PRD 2.1); "Call" dials (tel:). No forms (CLAUDE.md rule 5).
+// A button whose number is still TBC: inert with the TBC marker on the preview site, left out in production;
+// with neither number the bar disappears.
 import TBC from './TBC.astro';
 import { localeFromParams, useTranslations } from '../i18n';
-import { telHref, whatsappHref } from '../lib/links';
+import { external, telHref, whatsappHref } from '../lib/links';
 import { isShown } from '../lib/tbc';
 import type { Settings } from '../lib/content';
 
@@ -22,55 +22,35 @@ const showWa = isShown(settings.whatsapp);
 const showTel = isShown(settings.phone);
 ---
 {(showWa || showTel) && (
-  <aside class="booking-cta" aria-label={t.a11y.bookingBar}>
-    <div class="container inner">
-      {showWa && (wa
-        ? <a class="btn primary" href={wa} rel="noopener" target="_blank">{t.cta.book}</a>
-        : <span class="btn primary is-tbc">{t.cta.book} <TBC value={settings.whatsapp} /></span>)}
-      {showTel && (tel
-        ? <a class="btn secondary" href={tel}>{t.cta.call} {settings.phone}</a>
-        : <span class="btn secondary is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>)}
-    </div>
+  <aside class="booking-bar" aria-label={t.a11y.bookingBar}>
+    {showWa && (wa
+      ? <a class="btn btn-primary wa" href={wa} {...external}>{t.cta.whatsappBook}</a>
+      : <span class="btn btn-primary wa is-tbc">{t.cta.whatsappBook} <TBC value={settings.whatsapp} /></span>)}
+    {showTel && (tel
+      ? <a class="btn btn-secondary call" href={tel}>{t.cta.call}</a>
+      : <span class="btn btn-secondary call is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>)}
   </aside>
 )}
 
 <style>
-  /* Sticky (not fixed): the bar keeps its own space at the end of the page, so it can never
-     cover the footer, however tall it gets (e.g. when TBC markers wrap on narrow phones). */
-  .booking-cta {
+  /* Sticky (not fixed): the bar keeps its own space at the end of the page, so it never covers the footer. */
+  .booking-bar {
     position: sticky;
     bottom: 0;
-    z-index: 50;
-    min-height: var(--cta-height);
-    padding-bottom: env(safe-area-inset-bottom);
-    background: var(--bg);
-    border-top: 1px solid var(--tint);
-  }
-  .inner {
+    z-index: 30;
     display: flex;
-    gap: 8px;
-    align-items: center;
-    min-height: var(--cta-height);
+    gap: 10px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 16px rgba(52, 66, 55, 0.08);
   }
-  .btn {
-    flex: 1;
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: var(--tap);
-    padding: 6px 12px;
-    border-radius: var(--radius);
-    font-weight: 600;
-    text-align: center;
-    text-decoration: none;
-  }
-  .primary { background: var(--green); color: var(--white); }
-  .secondary { border: 2px solid var(--green); color: var(--green); }
-  .is-tbc { font-size: 0.875rem; }
-  @media (min-width: 48rem) {
-    .inner { justify-content: flex-end; }
-    .btn { flex: 0 0 auto; padding-inline: 24px; }
+  .btn { padding: 10px 12px; font-size: 16px; }
+  .wa { flex: 1 1 0; }
+  .call { flex: 0 0 112px; }
+  .is-tbc { gap: 4px; font-size: 14px; }
+  .call.is-tbc { flex: 0 1 auto; }
+  @media (min-width: 1100px) {
+    .booking-bar { display: none; }
   }
 </style>

@@ -1,0 +1,47 @@
+---
+// Large article card (homepage design): green panel with the logo, meta, title, summary, "Read the note →".
+import Logo from './Logo.astro';
+import NoteMeta from './NoteMeta.astro';
+import { localeFromParams, localizedPath, useTranslations } from '../i18n';
+import { routes } from '../lib/routes';
+import type { Note } from '../lib/content';
+
+interface Props {
+  note: Note;
+  level?: 'h2' | 'h3';
+}
+const { note, level = 'h3' } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const Heading = level;
+---
+<a class="featured" href={localizedPath(locale, `${routes.notes}/${note.slug}`)}>
+  <span class="panel" aria-hidden="true"><Logo size={120} /></span>
+  <NoteMeta note={note} />
+  <Heading class="title">{note.title[locale]}</Heading>
+  <span class="summary">{note.summary[locale]}</span>
+  <span class="read">{t.home.readNote} →</span>
+</a>
+
+<style>
+  .featured { display: flex; flex-direction: column; gap: 8px; color: var(--ink); text-decoration: none; }
+  .featured:hover .title { color: var(--green-dark); }
+  .panel {
+    display: none;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 8px;
+    border-radius: var(--radius-card);
+    background: var(--tint);
+    align-items: center;
+    justify-content: center;
+  }
+  .panel :global(img) { display: block; width: 120px; height: 120px; }
+  .title { margin: 0; font-size: var(--title-featured); line-height: 1.4; font-weight: 600; }
+  .summary { max-width: 620px; color: var(--ink-soft); font-size: var(--text-small); }
+  .read { font-size: 15px; font-weight: 600; color: var(--green-dark); }
+  @media (min-width: 860px) {
+    .featured { gap: 12px; }
+    .panel { display: flex; }
+    .summary { font-size: var(--text); }
+  }
+</style>

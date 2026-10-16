@@ -11,3 +11,13 @@ export function formatDate(iso: string, locale: Locale): string {
 export function paragraphs(text: string): string[] {
   return text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 }
+
+/** ["English", "Mandarin"] → "English, Mandarin" / ["华语", "英语"] → "华语、英语". */
+export function listJoin(items: string[], locale: Locale): string {
+  return items.join(locale === 'zh' ? '、' : ', ');
+}
+
+/** Fills "{name}" placeholders in UI copy. */
+export function fill(template: string, values: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
+}

@@ -1,0 +1,32 @@
+---
+// "WhatsApp the clinic" + "Call 06-…" buttons. A number that is still TBC: inert button with the
+// TBC marker on the preview site, left out in production.
+import TBC from './TBC.astro';
+import { localeFromParams, useTranslations } from '../i18n';
+import { external, telHref, whatsappHref } from '../lib/links';
+import { isShown } from '../lib/tbc';
+import type { Settings } from '../lib/content';
+
+interface Props {
+  settings: Settings;
+}
+const { settings } = Astro.props;
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
+const tel = telHref(settings.phone);
+---
+{(isShown(settings.whatsapp) || isShown(settings.phone)) && (
+  <div class="contact-buttons">
+    {isShown(settings.whatsapp) && (wa
+      ? <a class="btn btn-primary" href={wa} {...external}>{t.cta.whatsappClinic}</a>
+      : <span class="btn btn-primary is-tbc">{t.cta.whatsappClinic} <TBC value={settings.whatsapp} /></span>)}
+    {isShown(settings.phone) && (tel
+      ? <a class="btn btn-secondary" href={tel}>{t.cta.call} {settings.phone}</a>
+      : <span class="btn btn-secondary is-tbc">{t.cta.call} <TBC value={settings.phone} /></span>)}
+  </div>
+)}
+
+<style>
+  .contact-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+</style>

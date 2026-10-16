@@ -1,23 +1,72 @@
 /*
- * Base design tokens from CLAUDE.md. Waiting for the owner's visual design —
- * do not add new colours or a type scale here without their sign-off.
+ * Design tokens. Source: the final homepage design (交接/设计稿/) and the design rules
+ * in 交接/进度.md「已决定」. Keep in sync with CLAUDE.md「设计令牌」. Owner signs off on any change.
  */
 :root {
-  --green: #1F863F; /* brand. White on this is ~4.6:1 (AA) — do not lighten. */
-  --bg: #F8F7F2;
-  --tint: #DCE8DD;
-  --ink: #344237;
+  /* Colour */
+  --green: #239242;       /* brand (logo heart line): large text, icons, lines */
+  --green-dark: #1B7A35;  /* buttons, links, small text. White on this is 5.4:1 */
+  --green-deep: #155F29;  /* link hover; small text on --tint (keeps ≥ 4.5:1 there) */
+  --tint: #DCECC8;        /* light green (logo background) */
+  --bg: #F8F7F2;          /* warm white */
+  --surface: #FFFFFF;     /* white bands, cards, chips */
+  --ink: #344237;         /* body text */
+  --ink-soft: #4A5A4E;    /* intro / summary paragraphs (design) */
+  --muted: #5A6A5E;       /* secondary text */
+  --line: #E3E8E3;        /* dividers */
+  --line-strong: #DCE3DC; /* list dividers */
+  --chip-border: #B9CDBC;
   --white: #FFFFFF;
 
-  /* TBC marker: deliberately loud so missing info can't be missed. */
-  --tbc-bg: #FFE14D;
-  --tbc-ink: #1A1A1A;
+  /* Preview-only labels (TBC, draft, pending review, pending permission). Never shown in production. */
+  --tbc-bg: #FFF3C4;
+  --tbc-ink: #6B4E00;
 
-  /* Placeholder layout values (owner to decide). */
-  --tap: 44px;          /* minimum touch target */
-  --gutter: 16px;
-  --measure: 68ch;
-  --radius: 6px;
-  --focus: 3px solid var(--ink);
-  --cta-height: 64px;   /* sticky booking bar (minimum height) */
+  /* Type */
+  --font-heading: 'Poppins', 'Milky Han Mono', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-body: 'Palanquin', 'Milky Han Mono', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  /* For the odd CJK word on English pages (language switcher), so they don't download the Chinese font. */
+  --font-cjk-system: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+
+  /* Sizes: mobile first; desktop values in the media query below. */
+  --text: 17px;           /* body */
+  --text-small: 15px;
+  --text-meta: 14px;      /* never smaller */
+  --text-button: 16px;
+  --h1: 32px;             /* doctor's name / page titles */
+  --h2: 24px;             /* section titles */
+  --lead: 24px;           /* hero intro line */
+  --title-featured: 21px;
+  --title-list: 18px;
+  --title-step: 18px;
+  --text-step: 16px;
+  --leading: 1.7;         /* zh: 1.8 (set on :lang(zh)) */
+  --measure: 640px;       /* ~70 characters per line */
+
+  /* Space */
+  --gutter: 20px;
+  --section: 56px;        /* vertical padding of a section */
+  --tap: 44px;            /* minimum touch target */
+  --radius-pill: 999px;
+  --radius-card: 20px;
+  --radius-small: 4px;
+  --focus: 3px solid var(--green-dark);
+  --header-height: 61px;  /* mobile sticky bar; anchor targets scroll below it */
+}
+
+@media (min-width: 860px) {
+  :root {
+    --text: 18px;
+    --text-small: 16px;
+    --text-button: 17px;
+    --h1: 44px;
+    --h2: 32px;
+    --lead: 28px;
+    --title-featured: 26px;
+    --title-list: 20px;
+    --title-step: 19px;
+    --text-step: 17px;
+    --gutter: 32px;
+    --section: 96px;
+  }
 }

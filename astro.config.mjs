@@ -11,7 +11,8 @@ export default defineConfig({
   // 4401–4407 are taken by the Lixi Studio sites, 4321 by 窗边有光.
   server: { port: 4410 },
   trailingSlash: 'always',
-  build: { format: 'directory' },
+  // Inline the (small) CSS so the first paint doesn't wait for extra requests.
+  build: { format: 'directory', inlineStylesheets: 'always' },
   // `/` has no content of its own; it always goes to the English home page.
   // public/_redirects makes this a real 301 on Cloudflare Pages.
   redirects: { '/': '/en/' },

@@ -1,7 +1,10 @@
 [
   {
     "id": "do-i-need-to-see-a-psychiatrist",
-    "title": { "en": "Do I need to see a psychiatrist?", "zh": "我需要看心理医生吗？" },
+    "title": {
+      "en": "Do I need to see a psychiatrist?",
+      "zh": "我需要看心理医生吗？"
+    },
     "summary": {
       "en": "Starting from a secondary-school student’s first step in asking for help: when it may be time to seek help, who you can turn to, and how psychiatrists, clinical psychologists, counsellors and occupational therapists differ.",
       "zh": "从一位中学生第一次开口求助的经历说起：什么时候可以考虑寻求帮助、可以找谁，以及精神科医生、临床心理师、辅导员和职能治疗师有什么不同。"
@@ -9,19 +12,12 @@
     "topic": "symptoms",
     "publishedAt": "2024-07-16",
     "featured": true,
-    "externalUrl": "https://sunlitcorner8.wordpress.com/2024/07/16/%e6%88%91%e9%9c%80%e8%a6%81%e7%9c%8b%e5%bf%83%e7%90%86%e5%8c%bb%e7%94%9f%e5%90%97%ef%bc%9f/"
-  },
-  {
-    "id": "he-really-understood",
-    "title": { "en": "He really understood", "zh": "他真的懂" },
-    "summary": {
-      "en": "At the end of a tiring day, Dr. Hanni’s cat Heibao answers a small gesture of affection in his own way — a short reflection on what it feels like to be understood.",
-      "zh": "下班后疲惫的一刻，家里的猫咪黑豹用自己的方式回应了涵倪医生的温柔。一篇关于被理解、被「接住」的小记。"
-    },
-    "topic": "clinical",
-    "publishedAt": "2025-05-25",
-    "featured": false,
-    "externalUrl": "https://sunlitcorner8.wordpress.com/2025/05/25/%e4%bb%96%e7%9c%9f%e7%9a%84%e6%87%82/"
+    "needsReview": true,
+    "source": "blog",
+    "sourceSite": "sunlit-blog",
+    "sourceUrl": "https://sunlitcorner8.wordpress.com/2024/07/16/%e6%88%91%e9%9c%80%e8%a6%81%e7%9c%8b%e5%bf%83%e7%90%86%e5%8c%bb%e7%94%9f%e5%90%97%ef%bc%9f/",
+    "sourceDate": "2024-07-16",
+    "permission": true
   },
   {
     "id": "the-second-glass-of-water",
@@ -36,7 +32,11 @@
     "topic": "clinical",
     "publishedAt": "2025-05-18",
     "featured": false,
-    "externalUrl": "https://sunlitcorner8.wordpress.com/2025/05/18/%e7%ac%ac%e4%ba%8c%e6%9d%af%e6%b0%b4%e7%9a%84%e6%97%b6%e9%97%b4-%e5%bd%93%e7%97%85%e4%ba%ba%e6%83%85%e7%bb%aa%e5%86%b3%e5%a0%a4%e6%97%b6/"
+    "source": "blog",
+    "sourceSite": "sunlit-blog",
+    "sourceUrl": "https://sunlitcorner8.wordpress.com/2025/05/18/%e7%ac%ac%e4%ba%8c%e6%9d%af%e6%b0%b4%e7%9a%84%e6%97%b6%e9%97%b4-%e5%bd%93%e7%97%85%e4%ba%ba%e6%83%85%e7%bb%aa%e5%86%b3%e5%a0%a4%e6%97%b6/",
+    "sourceDate": "2025-05-18",
+    "permission": true
   },
   {
     "id": "since-my-parents-died",
@@ -51,11 +51,18 @@
     "topic": "clinical",
     "publishedAt": "2025-05-11",
     "featured": false,
-    "externalUrl": "https://sunlitcorner8.wordpress.com/2025/05/11/%e8%87%aa%e4%bb%8e%e7%88%b6%e6%af%8d%e5%8f%8c%e4%ba%a1%ef%bc%8c%e6%88%91%e4%bb%a5%e4%b8%ba%e5%86%8d%e4%b9%9f%e6%b2%a1%e6%9c%89%e4%ba%ba%e7%88%b1%e6%88%91%e4%ba%86/"
+    "source": "blog",
+    "sourceSite": "sunlit-blog",
+    "sourceUrl": "https://sunlitcorner8.wordpress.com/2025/05/11/%e8%87%aa%e4%bb%8e%e7%88%b6%e6%af%8d%e5%8f%8c%e4%ba%a1%ef%bc%8c%e6%88%91%e4%bb%a5%e4%b8%ba%e5%86%8d%e4%b9%9f%e6%b2%a1%e6%9c%89%e4%ba%ba%e7%88%b1%e6%88%91%e4%ba%86/",
+    "sourceDate": "2025-05-11",
+    "permission": true
   },
   {
     "id": "if-one-day-you-forget-who-i-am",
-    "title": { "en": "If one day you forget who I am", "zh": "若是有一天，你忘了我是谁" },
+    "title": {
+      "en": "If one day you forget who I am",
+      "zh": "若是有一天，你忘了我是谁"
+    },
     "summary": {
       "en": "An elderly man who brings his wife, recently diagnosed with dementia, to every appointment shares a Hokkien song with Dr. Hanni. A note on companionship, patience and a long marriage.",
       "zh": "一位每次都陪着患失智症的老伴来看诊的老伯伯，分享给涵倪医生一首闽南歌。关于陪伴、耐心，以及老夫老妻之间的珍惜。"
@@ -63,6 +70,10 @@
     "topic": "family",
     "publishedAt": "2024-07-17",
     "featured": false,
-    "externalUrl": "https://sunlitcorner8.wordpress.com/2024/07/17/ep-02%ef%bc%9a%e3%80%90%e8%8b%a5%e6%98%af%e6%9c%89%e4%b8%80%e5%a4%a9%ef%bc%8c%e4%bd%a0%e5%bf%98%e4%ba%86%e6%88%91%e6%98%af%e8%b0%81%e3%80%91%e8%80%81%e4%bc%b4%e6%82%a3%e4%ba%86%e5%a4%b1%e6%99%ba/"
+    "source": "blog",
+    "sourceSite": "sunlit-blog",
+    "sourceUrl": "https://sunlitcorner8.wordpress.com/2024/07/17/ep-02%ef%bc%9a%e3%80%90%e8%8b%a5%e6%98%af%e6%9c%89%e4%b8%80%e5%a4%a9%ef%bc%8c%e4%bd%a0%e5%bf%98%e4%ba%86%e6%88%91%e6%98%af%e8%b0%81%e3%80%91%e8%80%81%e4%bc%b4%e6%82%a3%e4%ba%86%e5%a4%b1%e6%99%ba/",
+    "sourceDate": "2024-07-17",
+    "permission": true
   }
 ]

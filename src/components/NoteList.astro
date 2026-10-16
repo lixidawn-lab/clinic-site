@@ -1,37 +1,42 @@
 ---
-// Plain list of notes: title (link), topic, date, summary. English pages flag Chinese-only articles.
-import { localeFromParams, localizedPath, useTranslations } from '../i18n';
-import { formatDate } from '../lib/format';
+// Compact article list (homepage design): meta line + title, divided by thin lines.
+import NoteMeta from './NoteMeta.astro';
+import { localeFromParams, localizedPath } from '../i18n';
 import { routes } from '../lib/routes';
 import type { Note } from '../lib/content';
 
 interface Props {
   notes: Note[];
   /** Heading level of each note title. */
-  level?: 'h2' | 'h3';
+  level?: 'h2' | 'h3' | 'h4';
+  /** Also show the summary under each title. */
+  summaries?: boolean;
 }
 
-const { notes, level = 'h3' } = Astro.props;
+const { notes, level = 'h3', summaries = false } = Astro.props;
 const locale = localeFromParams(Astro.params);
-const t = useTranslations(locale);
 const Heading = level;
 ---
 <ul class="note-list">
   {notes.map((note) => (
     <li>
-      <Heading class="title"><a href={localizedPath(locale, `${routes.notes}/${note.slug}`)}>{note.title[locale]}</a></Heading>
-      <p class="meta">
-        {t.notes.topics[note.topic]} · <time datetime={note.publishedAt}>{formatDate(note.publishedAt, locale)}</time>
-        {!note.bodyLocales.includes(locale) && <> · {t.notes.inChinese}</>}
-      </p>
-      <p>{note.summary[locale]}</p>
+      <a href={localizedPath(locale, `${routes.notes}/${note.slug}`)}>
+        <NoteMeta note={note} />
+        <Heading class="title">{note.title[locale]}</Heading>
+        {summaries && <span class="summary">{note.summary[locale]}</span>}
+      </a>
     </li>
   ))}
 </ul>
 
 <style>
-  .note-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; }
-  .title { margin: 0; font-size: 1.125rem; }
-  .meta { margin: 4px 0; font-size: 0.875rem; }
-  p { margin: 0; }
+  .note-list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+  li { border-top: 1px solid var(--line); }
+  a { display: flex; flex-direction: column; gap: 4px; padding: 18px 0; color: var(--ink); text-decoration: none; }
+  a:hover .title { color: var(--green-dark); }
+  .title { margin: 0; font-size: var(--title-list); line-height: 1.45; font-weight: 600; }
+  .summary { margin-top: 4px; max-width: var(--measure); color: var(--ink-soft); font-size: var(--text-small); }
+  @media (min-width: 860px) {
+    a { gap: 6px; padding: 24px 0; }
+  }
 </style>

@@ -1,11 +1,16 @@
 ---
+// Appointments & Clinic (PRD 3.4), using the homepage design rules.
+// Blocks without copy yet (Before Your Visit, Follow-up Care) show TBC on the preview site and disappear in production.
 import Base from '../../layouts/Base.astro';
 import ClinicInfo from '../../components/ClinicInfo.astro';
-import Draft from '../../components/Draft.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
 import Field from '../../components/Field.astro';
 import JsonLd from '../../components/JsonLd.astro';
+import PreviewLabel from '../../components/PreviewLabel.astro';
+import Steps from '../../components/Steps.astro';
 import { localeFromParams, localeStaticPaths, useTranslations } from '../../i18n';
-import { getFaq, getServices, getSettings } from '../../lib/content';
+import { getFaq, getHowWeBegin, getServices, getSettings } from '../../lib/content';
+import { paragraphs } from '../../lib/format';
 import { routes } from '../../lib/routes';
 import { faqPage } from '../../lib/schema';
 import { isShown, isTbc } from '../../lib/tbc';
@@ -15,38 +20,115 @@ export const getStaticPaths = localeStaticPaths;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
 const page = t.pages.appointments;
-const [settings, services, faq] = await Promise.all([getSettings(), getServices(), getFaq()]);
+const [settings, services, steps, faq] = await Promise.all([getSettings(), getServices(), getHowWeBegin(), getFaq()]);
 const visibleFaq = faq.filter((f) => isShown(f.answer[locale]));
 // Structured data only carries answers that actually exist (TBC answers left out).
 const answeredFaq = faq
   .filter((f) => !isTbc(f.answer[locale]))
   .map((f) => ({ question: f.question[locale], answer: f.answer[locale] }));
+const before = settings.beforeYourVisit[locale];
+const followUp = settings.followUpCare[locale];
 ---
 <Base title={page.title} description={page.description} route={routes.appointments} nav="appointments">
   {answeredFaq.length > 0 && <JsonLd slot="head" data={faqPage(answeredFaq)} />}
-  <div class="container page">
+
+  <div class="container page-head">
     <h1>{page.title}</h1>
-
-    <section>
-      <h2>{t.appointments.services}</h2>
-      <ul>
-        {services.map((s) => <li>{s.title[locale]} {!s.confirmed && <Draft />}</li>)}
-      </ul>
-    </section>
-
-    <section>
-      <h2>{t.appointments.faq}</h2>
-      {visibleFaq.map((f) => (
-        <>
-          <h3>{f.question[locale]}</h3>
-          <p><Field value={f.answer[locale]} /></p>
-        </>
-      ))}
-    </section>
-
-    <section>
-      <h2>{t.appointments.clinicInfo}</h2>
-      <ClinicInfo settings={settings} full />
-    </section>
+    <p class="intro soft">{t.home.visitIntro}</p>
   </div>
+
+  <section class="container services" aria-labelledby="services-title">
+    <h2 id="services-title" class="section-title">{t.appointments.services}</h2>
+    <ul class="service-list">
+      {services.map((s) => <li>{s.title[locale]} {!s.confirmed && <PreviewLabel kind="draft" />}</li>)}
+    </ul>
+  </section>
+
+  <section class="band-tint" aria-labelledby="first-visit-title">
+    <div class="container section">
+      <h2 id="first-visit-title" class="section-title">{t.appointments.firstVisit}</h2>
+      <Steps steps={steps} />
+    </div>
+  </section>
+
+  {(isShown(before) || isShown(followUp)) && (
+    <div class="container section two-col">
+      {isShown(before) && (
+        <section aria-labelledby="before-title" class="prose">
+          <h2 id="before-title" class="section-title">{t.appointments.beforeVisit}</h2>
+          {isTbc(before) ? <p><Field value={before} /></p> : paragraphs(before).map((p) => <p>{p}</p>)}
+        </section>
+      )}
+      {isShown(followUp) && (
+        <section aria-labelledby="follow-up-title" class="prose">
+          <h2 id="follow-up-title" class="section-title">{t.appointments.followUp}</h2>
+          {isTbc(followUp) ? <p><Field value={followUp} /></p> : paragraphs(followUp).map((p) => <p>{p}</p>)}
+        </section>
+      )}
+    </div>
+  )}
+
+  <section class="band-white" aria-labelledby="faq-title">
+    <div class="container section">
+      <h2 id="faq-title" class="section-title">{t.appointments.faq}</h2>
+      <div class="faq">
+        {visibleFaq.map((f) => (
+          <div class="faq-item">
+            <h3 class="question">{f.question[locale]}</h3>
+            <p><Field value={f.answer[locale]} /></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="book" class="container section two-col visit" aria-labelledby="clinic-title">
+    <div class="visit-main">
+      <h2 id="clinic-title">{t.appointments.book}</h2>
+      <p class="soft">{t.home.visitIntro}</p>
+      <ContactButtons settings={settings} />
+    </div>
+    <div>
+      <h2 class="visually-hidden">{t.appointments.clinicInfo}</h2>
+      <ClinicInfo settings={settings} full />
+    </div>
+  </section>
 </Base>
+
+<style>
+  .page-head { padding-top: 28px; padding-bottom: 24px; }
+  .page-head h1 { margin: 0; }
+  .intro { margin: 8px 0 0; max-width: var(--measure); }
+  .services { padding-bottom: 48px; }
+  .service-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    column-gap: 32px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .service-list li { padding: 12px 0; border-top: 1px solid var(--line-strong); margin-bottom: -1px; font-weight: 500; }
+
+  .two-col { display: flex; flex-direction: column; gap: 48px; }
+  .prose :global(p) { margin: 0 0 1em; }
+
+  .faq { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 0 56px; }
+  .faq-item { padding: 20px 0; border-top: 1px solid var(--line); }
+  .question { margin: 0 0 6px; font-size: var(--title-list); line-height: 1.45; }
+  .faq-item p { margin: 0; max-width: var(--measure); color: var(--ink-soft); }
+
+  .visit-main { display: flex; flex-direction: column; gap: 20px; }
+  .visit-main h2, .visit-main p { margin: 0; }
+  .visit-main p { max-width: 520px; }
+
+  @media (min-width: 860px) {
+    .page-head { padding-top: 64px; padding-bottom: 40px; }
+    .services { padding-bottom: 88px; }
+    .service-list li { padding: 14px 0; }
+    .two-col { flex-direction: row; flex-wrap: wrap; gap: 72px; align-items: flex-start; }
+    .two-col > * { flex: 1 1 420px; min-width: 0; }
+    .faq-item { padding: 24px 0; }
+  }
+</style>

@@ -7,4 +7,5 @@ export const routes = {
 } as const;
 
 export type PageKey = keyof typeof routes;
-export const navOrder: PageKey[] = ['home', 'about', 'notes', 'appointments'];
+// The logo links home, so the menu lists the other three (homepage design).
+export const navOrder: PageKey[] = ['about', 'notes', 'appointments'];

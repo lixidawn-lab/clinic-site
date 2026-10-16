@@ -1,76 +1,163 @@
 ---
-import Field from './Field.astro';
+// Desktop (≥ 1100px): logo + name, the three pages, language, "Book an Appointment".
+// Smaller screens: sticky bar with logo, language and a menu button (<details>, works without JS);
+// booking moves to the bar at the bottom of the screen (BookingBar).
+import Logo from './Logo.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 import { localeFromParams, localizedPath, useTranslations } from '../i18n';
+import { bookHref, external } from '../lib/links';
 import { navOrder, routes, type PageKey } from '../lib/routes';
-import type { Settings } from '../lib/content';
+import type { Doctor, Settings } from '../lib/content';
 
 interface Props {
   settings: Settings;
+  doctor: Doctor;
   /** Which nav item is the current page (or the section it belongs to). */
   current?: PageKey;
   route: string;
 }
 
-const { settings, current, route } = Astro.props;
+const { settings, doctor, current, route } = Astro.props;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
+const book = bookHref(settings.whatsapp, settings.bookingMessage[locale], locale);
+const bookIsExternal = book.startsWith('https://');
 ---
 <header class="site-header">
   <div class="container bar">
     <a class="brand" href={localizedPath(locale, routes.home)}>
-      <Field value={settings.clinicName[locale]} />
+      <Logo size={48} class="brand-logo" />
+      <span class="brand-text">
+        <span class="brand-name">{doctor.name.en}</span>
+        <span class="brand-tagline">{settings.tagline[locale]}</span>
+      </span>
     </a>
-    <LanguageSwitcher route={route} />
+
+    <nav class="desktop-nav" aria-label={t.a11y.mainNav}>
+      <ul>
+        {navOrder.map((key) => (
+          <li><a href={localizedPath(locale, routes[key])} aria-current={key === current ? 'page' : undefined}>{t.nav[key]}</a></li>
+        ))}
+        <li><LanguageSwitcher route={route} /></li>
+        <li><a class="btn btn-primary header-cta" href={book} {...(bookIsExternal ? external : {})}>{t.cta.book}</a></li>
+      </ul>
+    </nav>
+
+    <div class="mobile-tools">
+      <LanguageSwitcher route={route} />
+      <details class="menu">
+        <summary aria-label={t.a11y.menu}>
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </summary>
+        <nav class="menu-panel" aria-label={t.a11y.mainNav}>
+          <ul>
+            {navOrder.map((key) => (
+              <li><a href={localizedPath(locale, routes[key])} aria-current={key === current ? 'page' : undefined}>{t.nav[key]}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </details>
+    </div>
   </div>
-  <nav class="container" aria-label={t.a11y.mainNav}>
-    <ul>
-      {navOrder.map((key) => (
-        <li>
-          <a href={localizedPath(locale, routes[key])} aria-current={key === current ? 'page' : undefined}>
-            {t.nav[key]}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
 </header>
 
 <style>
-  .site-header { border-bottom: 1px solid var(--tint); }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
   .bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    min-height: var(--header-height);
     padding-block: 8px;
   }
   .brand {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap);
-    color: var(--ink);
-    font-weight: 700;
-    text-decoration: none;
-  }
-  nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0 0 4px;
     display: flex;
-    gap: 4px;
-    /* Mobile: one scrollable row instead of a JS menu. */
-    overflow-x: auto;
-  }
-  nav a {
-    display: inline-flex;
     align-items: center;
+    gap: 10px;
     min-height: var(--tap);
-    padding-inline: 12px;
     color: var(--ink);
-    white-space: nowrap;
     text-decoration: none;
-    border-bottom: 3px solid transparent;
   }
-  nav a[aria-current='page'] { border-bottom-color: var(--green); font-weight: 600; }
+  .brand :global(.brand-logo img) { display: block; width: 36px; height: 36px; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+  .brand-name { font-family: var(--font-heading); font-size: 17px; font-weight: 700; }
+  .brand-tagline { display: none; font-size: var(--text-meta); color: var(--muted); }
+
+  .desktop-nav { display: none; }
+
+  .mobile-tools { display: flex; align-items: center; gap: 4px; margin-right: -10px; }
+  .menu { position: static; }
+  .menu summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap);
+    height: var(--tap);
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 8px 16px rgba(52, 66, 55, 0.08);
+  }
+  .menu-panel ul { list-style: none; margin: 0; padding: 8px var(--gutter) 16px; }
+  .menu-panel a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--ink);
+    font-size: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .menu-panel a[aria-current='page'] { color: var(--green-dark); font-weight: 600; }
+
+  @media (min-width: 1100px) {
+    .site-header { position: static; border-bottom: 0; }
+    .bar { padding-block: 24px; flex-wrap: wrap; gap: 16px; }
+    .brand { gap: 12px; }
+    .brand :global(.brand-logo img) { width: 48px; height: 48px; }
+    .brand-name { font-size: 20px; }
+    .brand-tagline { display: block; }
+    .mobile-tools { display: none; }
+    .desktop-nav { display: block; }
+    .desktop-nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 18px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .desktop-nav a:not(.btn) {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--tap);
+      padding-inline: 4px;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+    .desktop-nav a:not(.btn):hover { color: var(--green-dark); }
+    .desktop-nav a[aria-current='page'] { border-bottom-color: var(--green); }
+    .header-cta { padding: 10px 22px; font-size: 16px; margin-left: 6px; }
+  }
 </style>

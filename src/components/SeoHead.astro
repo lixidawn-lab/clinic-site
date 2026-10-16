@@ -11,28 +11,38 @@ interface Props {
   /** Appended to the title when known (e.g. the clinic name). */
   siteName?: string;
   ogType?: 'website' | 'article';
+  /**
+   * Canonical URL on another site (articles from 窗边有光 or the media). Then this page is not the
+   * official version, so it doesn't announce language alternates either.
+   */
+  externalCanonical?: string | null;
 }
 
-const { title, description, route, siteName, ogType = 'website' } = Astro.props;
+const { title, description, route, siteName, ogType = 'website', externalCanonical } = Astro.props;
 const locale = localeFromParams(Astro.params);
 const abs = (path: string) => new URL(path, Astro.site).href;
 
 const fullTitle = siteName ? `${title} | ${siteName}` : title;
-const canonical = abs(localizedPath(locale, route));
+const pageUrl = abs(localizedPath(locale, route));
+const canonical = externalCanonical ?? pageUrl;
 const alternates = locales.map((l) => ({ hreflang: htmlLang[l], href: abs(localizedPath(l, route)) }));
 const xDefault = abs(localizedPath(defaultLocale, route));
 ---
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
-<link rel="alternate" hreflang="x-default" href={xDefault} />
+{!externalCanonical && (
+  <>
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <link rel="alternate" hreflang="x-default" href={xDefault} />
+  </>
+)}
 {!allowIndexing && <meta name="robots" content="noindex,nofollow" />}
 
 <meta property="og:type" content={ogType} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={canonical} />
+<meta property="og:url" content={pageUrl} />
 <meta property="og:locale" content={ogLocale[locale]} />
 {otherLocales(locale).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
 {siteName && <meta property="og:site_name" content={siteName} />}

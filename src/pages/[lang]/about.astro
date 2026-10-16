@@ -1,10 +1,16 @@
 ---
+// About Hanni (PRD 3.2), using the homepage design rules.
+// Each clinical interest has an anchor (/about/#<id>) that the homepage "Areas of Focus" list links to.
 import Base from '../../layouts/Base.astro';
 import JsonLd from '../../components/JsonLd.astro';
 import NoteList from '../../components/NoteList.astro';
+import Portrait from '../../components/Portrait.astro';
+import TBC from '../../components/TBC.astro';
 import { localeFromParams, localeStaticPaths, localizedPath, useTranslations } from '../../i18n';
 import { getDoctor, getNotes, getSettings } from '../../lib/content';
-import { paragraphs } from '../../lib/format';
+import { formatDate, listJoin, paragraphs } from '../../lib/format';
+import { external } from '../../lib/links';
+import { showPreviewLabels } from '../../lib/preview';
 import { routes } from '../../lib/routes';
 import { physician } from '../../lib/schema';
 
@@ -16,55 +22,145 @@ const page = t.pages.about;
 const [settings, doctor, notes] = await Promise.all([getSettings(), getDoctor(), getNotes()]);
 const bio = doctor.bio[locale];
 const publications = doctor.publications.filter((p) => p.verified);
+// "Learning Through Stories": stories from the clinic.
+const stories = notes.filter((n) => n.topic !== 'symptoms').slice(0, 3);
 ---
 <Base title={page.title} description={page.description} route={routes.about} nav="about">
   <JsonLd slot="head" data={physician(doctor, settings, locale, Astro.site!)} />
-  <div class="container page">
-    <h1>{doctor.name[locale]}</h1>
-    <p>{doctor.title[locale]}</p>
-    <p><strong>{bio.lead}</strong></p>
-    {paragraphs(bio.body).map((p) => <p>{p}</p>)}
 
-    <section>
-      <h2>{t.about.background}</h2>
-      <h3>{t.about.qualifications}</h3>
-      <ul>{doctor.qualifications.map((q) => <li>{q[locale]}</li>)}</ul>
-      {doctor.showRegistrations && (
-        <>
-          <h3>{t.about.registrations}</h3>
-          <ul>{doctor.registrations.map((r) => <li>{r[locale]}</li>)}</ul>
-        </>
-      )}
-      <h3>{t.about.experience}</h3>
-      <p>{doctor.experience[locale]}</p>
-      {doctor.alsoPractises.show && <p>{doctor.alsoPractises.name[locale]}</p>}
-      <h3>{t.about.languages}</h3>
-      <ul>{doctor.languages.map((l) => <li>{l[locale]}</li>)}</ul>
+  <section class="container intro">
+    <Portrait class="intro-photo" alt={doctor.name[locale]} sizes="(min-width: 860px) 320px, calc(100vw - 40px)" priority />
+    <div class="intro-text">
+      <div>
+        <h1>{doctor.name[locale]}</h1>
+        <p class="subtitle">{doctor.title[locale]}</p>
+      </div>
+      <p class="lead">{bio.lead}</p>
+      {paragraphs(bio.body).map((p) => <p class="soft">{p}</p>)}
+    </div>
+  </section>
+
+  <section class="band-white" aria-labelledby="background-title">
+    <div class="container section two-col">
+      <div>
+        <h2 id="background-title" class="section-title">{t.about.background}</h2>
+        <dl class="facts">
+          <div>
+            <dt>{t.about.qualifications}</dt>
+            {doctor.qualifications.map((q) => <dd>{q[locale]}</dd>)}
+          </div>
+          {doctor.showRegistrations && (
+            <div>
+              <dt>{t.about.registrations}</dt>
+              {doctor.registrations.map((r) => <dd>{r.label[locale]} {r.number}</dd>)}
+            </div>
+          )}
+          <div>
+            <dt>{t.about.experience}</dt>
+            <dd>{doctor.experience[locale]}</dd>
+            {doctor.alsoPractises.show && <dd>{doctor.alsoPractises.name[locale]}</dd>}
+          </div>
+          <div>
+            <dt>{t.about.languages}</dt>
+            <dd>{listJoin(doctor.languages[locale], locale)}</dd>
+          </div>
+        </dl>
+      </div>
+      <div>
+        <h2 class="section-title">{t.about.clinicalInterests}</h2>
+        <ul class="interests">
+          {doctor.clinicalInterests.map((i) => <li id={i.id}>{i[locale]}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {doctor.approach && (
+    <section class="container section prose" aria-labelledby="approach-title">
+      <h2 id="approach-title" class="section-title">{t.about.approach}</h2>
+      {paragraphs(doctor.approach[locale]).map((p) => <p>{p}</p>)}
     </section>
+  )}
 
-    <section>
-      <h2>{t.about.clinicalInterests}</h2>
-      <ul>{doctor.clinicalInterests.map((i) => <li>{i[locale]}</li>)}</ul>
+  {stories.length > 0 && (
+    <section class="container section" aria-labelledby="stories-title">
+      <h2 id="stories-title" class="section-title">{t.about.stories}</h2>
+      <div class="stories"><NoteList notes={stories} summaries /></div>
+      <a class="arrow-link" href={localizedPath(locale, routes.notes)}>{t.home.allNotes} →</a>
     </section>
+  )}
 
-    {doctor.approach && (
-      <section>
-        <h2>{t.about.approach}</h2>
-        <p>{doctor.approach[locale]}</p>
-      </section>
-    )}
-
-    <section>
-      <h2>{t.about.stories}</h2>
-      <NoteList notes={notes.slice(0, 3)} />
-      <p><a href={localizedPath(locale, routes.notes)}>{t.home.allNotes}</a></p>
+  {(publications.length > 0 || showPreviewLabels) && (
+    <section class="container section publications" aria-labelledby="publications-title">
+      <h2 id="publications-title" class="section-title">{t.about.publications}</h2>
+      {publications.length > 0
+        ? (
+          <ul class="pub-list">
+            {publications.map((p) => (
+              <li>
+                {p.url ? <a href={p.url} {...external}>{p.title}</a> : p.title}
+                <span class="muted"> · {p.venue} · <time datetime={p.date}>{formatDate(p.date, locale)}</time></span>
+              </li>
+            ))}
+          </ul>
+        )
+        : <p><TBC refNo="5.6" /></p>}
     </section>
-
-    {publications.length > 0 && (
-      <section>
-        <h2>{t.about.publications}</h2>
-        <ul>{publications.map((p) => <li>{p.url ? <a href={p.url}>{p.title}</a> : p.title} · {p.venue} · {p.date}</li>)}</ul>
-      </section>
-    )}
-  </div>
+  )}
 </Base>
+
+<style>
+  .intro { display: grid; gap: 18px; padding-top: 28px; padding-bottom: 48px; }
+  .intro :global(.intro-photo img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 4.2;
+    object-fit: cover;
+    object-position: 50% 15%;
+    border-radius: var(--radius-card);
+  }
+  .intro-text { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .intro-text h1 { margin: 0; }
+  .intro-text p { margin: 0; max-width: var(--measure); }
+  .subtitle { margin-top: 4px !important; font-size: 15px; font-weight: 500; line-height: 1.6; color: var(--green-dark); }
+  .lead { font-family: var(--font-heading); font-size: var(--lead); line-height: 1.45; font-weight: 500; }
+
+  .two-col { display: flex; flex-direction: column; gap: 48px; }
+  .facts { margin: 0; display: flex; flex-direction: column; gap: 20px; }
+  .facts dt { font-size: var(--text-meta); font-weight: 600; color: var(--muted); }
+  :lang(en) .facts dt { letter-spacing: 0.08em; text-transform: uppercase; }
+  .facts dd { margin: 4px 0 0; line-height: 1.6; }
+
+  .interests {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    column-gap: 32px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .interests li { padding: 12px 0; border-top: 1px solid var(--line-strong); margin-bottom: -1px; font-weight: 500; }
+  .interests li:target { color: var(--green-dark); }
+
+  .stories { margin-bottom: 8px; }
+  .publications { padding-top: 0; }
+  .pub-list { margin: 0; padding-left: 1.2em; max-width: var(--measure); }
+  .pub-list li { margin-bottom: 8px; }
+
+  @media (min-width: 860px) {
+    .intro {
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      align-items: center;
+      column-gap: 72px;
+      padding-top: 64px;
+      padding-bottom: 104px;
+    }
+    .intro :global(.intro-photo img) { aspect-ratio: 4 / 5; object-position: 50% 18%; }
+    .intro-text { gap: 24px; }
+    .subtitle { margin-top: 6px !important; font-size: 18px; }
+    .two-col { flex-direction: row; flex-wrap: wrap; gap: 72px; }
+    .two-col > * { flex: 1 1 420px; min-width: 0; }
+    .interests li { padding: 14px 0; }
+  }
+</style>

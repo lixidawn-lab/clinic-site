@@ -1,0 +1,7 @@
+[
+  { "id": "low-mood", "order": 1, "label": { "en": "Low mood", "zh": "情绪低落" } },
+  { "id": "anxiety-stress", "order": 2, "label": { "en": "Anxiety & stress", "zh": "焦虑与压力" } },
+  { "id": "sleep", "order": 3, "label": { "en": "Sleep problems", "zh": "睡眠问题" } },
+  { "id": "attention", "order": 4, "label": { "en": "Attention difficulties", "zh": "注意力困难" } },
+  { "id": "teen-mental-health", "order": 5, "label": { "en": "Teen mental health", "zh": "青少年心理健康" } }
+]

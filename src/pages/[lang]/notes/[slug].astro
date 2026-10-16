@@ -1,11 +1,17 @@
 ---
-// Article page (PRD 3.3): byline linking to About, published / reviewed dates, "not a diagnosis" notice, booking CTA.
+// Article page (PRD 3.3): byline linking to About, published / reviewed dates, source card,
+// "not a diagnosis" notice, booking CTA.
+// Source rules (CLAUDE.md「文章来源规则」): canonical points to the original for 窗边有光 / media articles;
+// media articles without permission show only the summary and "Read the original".
 // An English page without an English body shows the title and summary and points to the Chinese article.
 import Base from '../../../layouts/Base.astro';
 import JsonLd from '../../../components/JsonLd.astro';
+import PreviewLabel from '../../../components/PreviewLabel.astro';
+import SourceCard from '../../../components/SourceCard.astro';
 import { localeFromParams, locales, localizedPath, useTranslations } from '../../../i18n';
-import { getDoctor, getNoteBody, getNotes } from '../../../lib/content';
+import { getDoctor, getNoteBody, getNotes, getSettings, noteSourceRules } from '../../../lib/content';
 import { formatDate } from '../../../lib/format';
+import { bookHref, external } from '../../../lib/links';
 import { routes } from '../../../lib/routes';
 import { article } from '../../../lib/schema';
 
@@ -17,42 +23,91 @@ export async function getStaticPaths() {
 const { note } = Astro.props;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
-const doctor = await getDoctor();
-const Body = await getNoteBody(note, locale);
+const [doctor, settings] = await Promise.all([getDoctor(), getSettings()]);
+const { fullText, externalCanonical } = noteSourceRules(note);
+const Body = fullText ? await getNoteBody(note, locale) : null;
 const bodyLocale = note.bodyLocales[0];
 const route = `${routes.notes}/${note.slug}`;
+const book = bookHref(settings.whatsapp, settings.bookingMessage[locale], locale);
 ---
-<Base title={note.title[locale]} description={note.summary[locale]} route={route} nav="notes" ogType="article">
+<Base title={note.title[locale]} description={note.summary[locale]} route={route} nav="notes" ogType="article" externalCanonical={externalCanonical}>
   {Body && <JsonLd slot="head" data={article(note, doctor, locale, Astro.site!)} />}
-  <article class="container page">
-    <h1>{note.title[locale]}</h1>
-    <p class="meta">
-      {t.notes.byline} <a href={localizedPath(locale, routes.about)}>{doctor.name[locale]}</a><br />
-      {t.notes.published}: <time datetime={note.publishedAt}>{formatDate(note.publishedAt, locale)}</time>
-      {note.reviewedAt && <><br />{t.notes.reviewed}: <time datetime={note.reviewedAt}>{formatDate(note.reviewedAt, locale)}</time></>}
-      <br />{t.notes.topic}: {t.notes.topics[note.topic]}
-    </p>
+  <article class="container article">
+    <header class="article-head">
+      {note.needsReview && <p class="review"><PreviewLabel kind="review" /></p>}
+      <p class="kicker">{t.notes.topics[note.topic]}</p>
+      <h1>{note.title[locale]}</h1>
+      <p class="byline">
+        <span>{t.notes.byline} <a href={localizedPath(locale, routes.about)}>{doctor.name[locale]}</a></span>
+        <span>{t.notes.published} <time datetime={note.publishedAt}>{formatDate(note.publishedAt, locale)}</time></span>
+        {note.reviewedAt && <span>{t.notes.reviewed} <time datetime={note.reviewedAt}>{formatDate(note.reviewedAt, locale)}</time></span>}
+      </p>
+    </header>
+
+    {note.source !== 'original' && <SourceCard note={note} />}
 
     {Body
-      ? <div class="body"><Body /></div>
+      ? <div class="article-body"><Body /></div>
       : (
-        <>
+        <div class="article-body">
           <p>{note.summary[locale]}</p>
-          <p><strong>{t.notes.inChinese}</strong> — {t.notes.inChineseNotice}</p>
-          {bodyLocale && (
-            <p><a href={localizedPath(bodyLocale, route)} hreflang="zh-Hans">{t.notes.readInChinese}</a></p>
+          {fullText && (
+            <>
+              <p><strong>{t.notes.inChinese}</strong> — {t.notes.inChineseNotice}</p>
+              {bodyLocale && <p><a href={localizedPath(bodyLocale, route)} hreflang="zh-Hans">{t.notes.readInChinese} →</a></p>}
+            </>
           )}
-        </>
+        </div>
       )}
 
-    <aside class="notice">
-      <p>{t.notes.disclaimer}</p>
-      <p>{t.notes.bookPrompt} <a href={localizedPath(locale, routes.appointments)}>{t.cta.book}</a></p>
-    </aside>
+    <footer class="article-foot">
+      <p class="disclaimer">{t.notes.disclaimer}</p>
+      <div class="book">
+        <p class="book-prompt">{t.notes.bookPrompt}</p>
+        <a class="btn btn-primary" href={book} {...(book.startsWith('https://') ? external : {})}>{t.cta.book}</a>
+      </div>
+    </footer>
   </article>
 </Base>
 
 <style>
-  .meta { font-size: 0.875rem; }
-  .notice { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--tint); }
+  .article { max-width: calc(720px + 2 * var(--gutter)); padding-top: 28px; padding-bottom: var(--section); }
+  .article-head { margin-bottom: 28px; }
+  .review { margin: 0 0 12px; }
+  .article-head h1 { margin: 8px 0 16px; line-height: 1.3; }
+  .byline { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: var(--text-meta); color: var(--muted); }
+
+  .article-body { max-width: var(--measure); }
+  .article-body :global(p) { margin: 0 0 1.1em; }
+  .article-body :global(h2) { margin: 1.8em 0 0.6em; font-size: var(--h2); }
+  .article-body :global(h3) { margin: 1.6em 0 0.5em; font-size: var(--title-list); }
+  .article-body :global(ul), .article-body :global(ol) { margin: 0 0 1.1em; padding-left: 1.4em; }
+  .article-body :global(li) { margin-bottom: 0.3em; }
+  .article-body :global(blockquote) {
+    margin: 1.4em 0;
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--green);
+    color: var(--ink-soft);
+  }
+  .article-body :global(blockquote p:last-child), .article-body :global(blockquote ul:last-child) { margin-bottom: 0; }
+  .article-body :global(hr) { margin: 2em 0; border: 0; border-top: 1px solid var(--line-strong); }
+  .article-body :global(img) { border-radius: 12px; }
+
+  .article-foot { max-width: var(--measure); margin-top: 48px; }
+  .disclaimer { margin: 0 0 24px; padding-top: 20px; border-top: 1px solid var(--line-strong); font-size: var(--text-meta); color: var(--muted); }
+  .book {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 24px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+  }
+  .book-prompt { margin: 0; font-family: var(--font-heading); font-size: var(--title-list); font-weight: 600; }
+  @media (min-width: 860px) {
+    .article { padding-top: 64px; }
+    .article-head { margin-bottom: 40px; }
+    .book { padding: 28px 32px; }
+  }
 </style>

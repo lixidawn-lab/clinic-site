@@ -6,7 +6,7 @@ import Footer from '../components/Footer.astro';
 import BookingCta from '../components/BookingCta.astro';
 import JsonLd from '../components/JsonLd.astro';
 import { htmlLang, localeFromParams, useTranslations } from '../i18n';
-import { getSettings } from '../lib/content';
+import { getDoctor, getSettings } from '../lib/content';
 import { isTbc } from '../lib/tbc';
 import { medicalClinic } from '../lib/schema';
 import type { PageKey } from '../lib/routes';
@@ -19,12 +19,14 @@ interface Props {
   /** Highlights this item in the main nav. */
   nav?: PageKey;
   ogType?: 'website' | 'article';
+  /** Republished article whose original lives elsewhere (CLAUDE.md「文章来源规则」). */
+  externalCanonical?: string | null;
 }
 
-const { title, description, route, nav, ogType } = Astro.props;
+const { title, description, route, nav, ogType, externalCanonical } = Astro.props;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
-const settings = await getSettings();
+const [settings, doctor] = await Promise.all([getSettings(), getDoctor()]);
 const clinicName = settings.clinicName[locale];
 const siteName = isTbc(clinicName) ? undefined : clinicName;
 ---
@@ -33,13 +35,32 @@ const siteName = isTbc(clinicName) ? undefined : clinicName;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <SeoHead title={title} description={description} route={route} siteName={siteName} ogType={ogType} />
+    <SeoHead title={title} description={description} route={route} siteName={siteName} ogType={ogType} externalCanonical={externalCanonical} />
+    <!--
+      Chinese web font (~370 KB) is requested only after the first paint, so it never delays the page:
+      on a first visit Chinese text shows in the system font for a moment, then switches.
+      Once a visitor has it (localStorage flag), later pages load it straight away from the browser cache.
+      Page content never depends on this script; without JS the font loads normally (<noscript>).
+    -->
+    <script is:inline>
+      (function () {
+        var css = '/fonts/milky-han-mono.css';
+        function add() { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = css; document.head.appendChild(l); }
+        try { if (localStorage.getItem('cjk-font') === '1') { add(); return; } } catch (e) {}
+        addEventListener('load', function () {
+          requestAnimationFrame(function () {
+            setTimeout(function () { add(); try { localStorage.setItem('cjk-font', '1'); } catch (e) {} }, 0);
+          });
+        });
+      })();
+    </script>
+    <noscript><link rel="stylesheet" href="/fonts/milky-han-mono.css" /></noscript>
     <JsonLd data={medicalClinic(settings, locale, Astro.site!)} />
     <slot name="head" />
   </head>
   <body>
     <a class="skip-link" href="#main">{t.a11y.skipToContent}</a>
-    <Header settings={settings} current={nav} route={route} />
+    <Header settings={settings} doctor={doctor} current={nav} route={route} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

@@ -2,11 +2,11 @@
 // Shows a content value, or the TBC marker if the value is still "TBC:x.x".
 // On the production site a TBC value renders nothing (plan A); wrap whole rows in isShown() so they disappear too.
 import TBC from './TBC.astro';
-import { isTbc, showTbc } from '../lib/tbc';
+import { isTbc } from '../lib/tbc';
 
 interface Props {
   value: string;
 }
 const { value } = Astro.props;
 ---
-{isTbc(value) ? showTbc && <TBC value={value} /> : value}
+{isTbc(value) ? <TBC value={value} /> : value}

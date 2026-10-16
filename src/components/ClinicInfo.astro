@@ -1,9 +1,11 @@
 ---
-// Clinic details as a plain list. `full` adds map, parking, fees and payment (Appointments & Clinic page).
+// Clinic details. `full` adds phone, WhatsApp, parking, fees and payment (Appointments & Clinic page);
+// the homepage shows address (+ directions) and opening hours. Ends with the emergency notice.
 // Empty (TBC) rows show the marker on the preview site and disappear in production (plan A).
 import Field from './Field.astro';
+import TBC from './TBC.astro';
 import { localeFromParams, useTranslations } from '../i18n';
-import { telHref, whatsappHref } from '../lib/links';
+import { external, telHref, whatsappHref } from '../lib/links';
 import { isShown, isTbc } from '../lib/tbc';
 import type { Settings } from '../lib/content';
 
@@ -20,39 +22,68 @@ const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
 
 type Row = { label: string; value: string; href?: string | null; external?: boolean };
 const rows: Row[] = [
-  { label: t.footer.address, value: settings.address[locale] },
-  { label: t.footer.phone, value: settings.phone, href: tel },
-  { label: t.footer.whatsapp, value: settings.whatsapp, href: wa, external: true },
-  { label: t.footer.hours, value: settings.hours[locale] },
   ...(full
     ? [
-        { label: t.appointments.map, value: settings.mapUrl, href: isTbc(settings.mapUrl) ? null : settings.mapUrl, external: true },
+        { label: t.appointments.phone, value: settings.phone, href: tel },
+        { label: t.appointments.whatsapp, value: settings.whatsapp, href: wa, external: true },
+      ]
+    : []),
+  { label: t.appointments.hours, value: settings.hours[locale] },
+  ...(full
+    ? [
         { label: t.appointments.parking, value: settings.parking[locale] },
         { label: t.appointments.fees, value: settings.fees[locale] },
         { label: t.appointments.payment, value: settings.payment[locale] },
       ]
     : []),
 ].filter((r) => isShown(r.value));
+const map = isTbc(settings.mapUrl) ? null : settings.mapUrl;
 ---
 <div class="clinic-info">
-{isShown(settings.clinicName[locale]) && <p class="name"><Field value={settings.clinicName[locale]} /></p>}
 <dl>
+  {isShown(settings.address[locale]) && (
+    <div>
+      <dt>{t.appointments.address}</dt>
+      <dd><Field value={settings.address[locale]} /></dd>
+      {isShown(settings.mapUrl) && (
+        <dd class="directions">
+          {map
+            ? <a class="arrow-link" href={map} {...external}>{t.home.directions} →</a>
+            : <span class="muted">{t.home.directions} <TBC value={settings.mapUrl} /></span>}
+        </dd>
+      )}
+    </div>
+  )}
   {rows.map((r) => (
     <div>
       <dt>{r.label}</dt>
       <dd>
         {r.href
-          ? <a href={r.href} {...(r.external ? { rel: 'noopener', target: '_blank' } : {})}>{r.value}</a>
+          ? <a href={r.href} {...(r.external ? external : {})}>{r.value}</a>
           : <Field value={r.value} />}
       </dd>
     </div>
   ))}
 </dl>
+<p class="emergency">{settings.emergencyNotice[locale]}</p>
 </div>
 
 <style>
-  .name { margin: 0 0 12px; font-weight: 600; }
-  dl { margin: 0; display: grid; gap: 12px; }
-  dt { font-weight: 600; }
-  dd { margin: 0; white-space: pre-line; }
+  .clinic-info, dl { margin: 0; display: flex; flex-direction: column; gap: 20px; }
+  dt { font-size: var(--text-meta); font-weight: 600; color: var(--muted); }
+  :lang(en) dt { letter-spacing: 0.08em; text-transform: uppercase; }
+  dd { margin: 4px 0 0; line-height: 1.6; white-space: pre-line; }
+  .directions { margin-top: 2px; }
+  .emergency {
+    margin: 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-strong);
+    font-size: var(--text-meta);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  @media (min-width: 860px) {
+    .clinic-info, dl { gap: 24px; }
+    .emergency { font-size: 15px; }
+  }
 </style>

@@ -37,14 +37,36 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 - 所有 UI 文案放在 `src/i18n/{en,zh}.ts`，组件里不写死文字。
 
 ## 内容模型（src/content）
-- `settings`（单例）：clinicName{en,zh}、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、privacyNotice{en,zh}、bookingMessage{en,zh}。缺失的值统一写 `"TBC:x.x"`（x.x 是 `docs/checklist.md` 的编号，必须写）。
-- `doctor`（单例）：name、titles、qualifications[]、languages[]、bio{en,zh}（使用涵倪提供的原文，不改写）、approach、publications[]{title,venue,date,url,role,verified}。只渲染 `verified:true` 的发表。
-- `notes`：title{en,zh}、summary、body（en/zh 各一个 md 文件）、topic、publishedAt、reviewedAt、featured、externalUrl。
+- `settings`（单例）：clinicName{en,zh}、tagline（页头名字下的一行）、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、privacyNotice{en,zh}、emergencyNotice、beforeYourVisit、followUpCare、bookingMessage{en,zh}、socialLinks（涵倪之后换成诊所账号）。缺失的值统一写 `"TBC:x.x"`（x.x 是 `docs/checklist.md` 的编号，必须写）。
+- `doctor`（单例）：name、title、qualifications[]、registrations[]、languages{en[],zh[]}（各自的顺序）、experience、bio{en,zh}（lead 是首屏大字；中文使用涵倪提供的原文，不改写）、clinicalInterests[]（带 id，About 页锚点 `/about/#<id>`）、approach、publications[]{title,venue,date,url,role,verified}。只渲染 `verified:true` 的发表。
+- `notes`：title{en,zh}、summary、body（en/zh 各一个 md 文件）、topic、publishedAt、reviewedAt、featured、needsReview，以及来源字段（见「文章来源规则」）。
+- `sources`：来源网站的 name{en,zh}、description{en,zh}、url。
+- `concerns`：首页「常见困扰」标签，目前都链接到 Doctor's Notes。
 - `services`、`faq`：带 `confirmed` 布尔值；未确认的显示 TBC。
 
-## 设计令牌（基础，等待用户的视觉稿）
---green:#1F863F（品牌）  --bg:#F8F7F2  --tint:#DCE8DD  --ink:#344237
-白字放在 --green 上的对比度约 4.6:1（AA），不要再调浅。移动端优先，触控目标 ≥ 44px，焦点状态清晰可见。
+## 设计令牌（首页定稿，2026-10-16；代码在 `src/styles/tokens.css`）
+- 颜色：品牌绿 `--green:#239242`（大字、图标、线条）；`--green-dark:#1B7A35`（按钮、链接、小字，白字对比 5.4:1）；`--green-deep:#155F29`（链接悬停；浅绿底上的小字，保证 ≥4.5:1）；浅绿底 `--tint:#DCECC8`；暖白 `--bg:#F8F7F2`；正文 `--ink:#344237`；辅助文字 `--muted:#5A6A5E`；`#419538` 只用于插画和装饰。
+- 字体（全部自托管，SIL OFL 1.1，见 `fonts/README.md`）：标题 Poppins（Logo 名字 700，标题和卡片标题 600，首屏介绍 500）；英文正文 Palanquin 400；中文星汉等宽 Milky Han Mono（Regular/Bold，构建时按全站实际用字子集化），备用 Noto Sans SC 和系统字体。
+- 字号（桌面 / 手机）：正文 18/17，行高 1.7（中文 1.8），每行 ≤ 640px；H1 44/32（700）；首屏介绍 28/24；栏目标题 32/24（600）；精选文章标题 26，列表标题 20；步骤标题 19、说明 17；按钮 17px，高 ≥ 44px；元信息 ≥ 14px。
+- 间距：版块上下 88–104px（手机 56px）；按钮全站圆角（胶囊形）。移动端优先，触控目标 ≥ 44px，焦点状态清晰可见。
+- 手机端（< 1100px）：顶部吸顶栏（logo、语言、菜单）；底部固定预约栏（WhatsApp + 致电，没有号码就隐藏）。
+
+## 文章来源规则（灵晞 2026-10-16 决定；Sanity 字段照此建立）
+- 每篇文章有 `source`：`original`（涵倪原创）/ `blog`（旧博客）/ `media`（媒体或机构报道）/ `chuangbian`（窗边有光）。另有 `sourceSite`（来源网站，名称和一两句介绍写在 `src/content/sources.json`，每个来源只写一次）、`sourceUrl`、`sourceDate`、`permission`（是否取得转载许可）。
+- 除 `original` 外，文章开头显示来源卡片：「本文原载于 〈来源名称〉，〈日期〉」+ 来源介绍 + 醒目的「阅读原文 →」按钮。
+
+| 来源 | 正文 | canonical |
+|---|---|---|
+| original | 全文 | 诊所网站 |
+| blog | 全文，来源卡片指向旧博客原文 | 诊所网站 |
+| chuangbian | 全文 | 指向窗边有光原文（这时不输出 hreflang） |
+| media | `permission: true` 才显示全文；否则只显示摘要和「阅读原文」（预览站标注「待取得转载许可」） | 指向媒体原文 |
+
+- ⚠️ `chuangbian` 允许放全文，与硬性规则 7「不复制窗边有光的内容」冲突，待灵晞决定（见 `交接/进度.md`）。在决定之前，不放窗边有光的文章。
+
+## 预览站标签（只有一个开关）
+- TBC、「初稿 · 待确认」、「待涵倪审阅」（文章 `needsReview: true`）、「待取得转载许可」都只在预览站显示，统一由 `src/lib/preview.ts` 控制：没开收录时显示，开了收录时（正式站）全部不出现。`PUBLIC_SHOW_PREVIEW_LABELS=true/false` 可以强制显示或隐藏。
+- `npm run check:production` 按正式站方式构建并检查：只要页面里还有任何一个这类标签，就报错。
 
 ## 分阶段（与 lixi-project-workflow 一致；每批结束后停下来，汇报并等用户确认）
 1. **骨架（Code）**：脚手架、令牌、Base 布局、页头/页脚（含固定的预约 CTA）、i18n 路由、SEO head 组件、TBC 组件、noindex 开关；部署 noindex 预览站（GitHub → Cloudflare Pages，推送后自动部署）。

@@ -1,8 +1,15 @@
 ---
+// Doctor's Notes (PRD 3.3): introduction, featured article, latest articles, topics, published elsewhere.
 import Base from '../../../layouts/Base.astro';
+import FeaturedNote from '../../../components/FeaturedNote.astro';
 import NoteList from '../../../components/NoteList.astro';
+import TBC from '../../../components/TBC.astro';
 import { localeFromParams, localeStaticPaths, useTranslations } from '../../../i18n';
-import { getNotes } from '../../../lib/content';
+import { noteTopics } from '../../../content.config';
+import { getDoctor, getNotes } from '../../../lib/content';
+import { formatDate } from '../../../lib/format';
+import { external } from '../../../lib/links';
+import { showPreviewLabels } from '../../../lib/preview';
 import { routes } from '../../../lib/routes';
 
 export const getStaticPaths = localeStaticPaths;
@@ -10,25 +17,79 @@ export const getStaticPaths = localeStaticPaths;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
 const page = t.pages.notes;
-const notes = await getNotes();
-const featured = notes.filter((n) => n.featured);
-const latest = notes.filter((n) => !n.featured);
+const [notes, doctor] = await Promise.all([getNotes(), getDoctor()]);
+const featured = notes.find((n) => n.featured);
+const latest = notes.filter((n) => n !== featured);
+const topics = noteTopics
+  .map((topic) => ({ topic, notes: notes.filter((n) => n.topic === topic) }))
+  .filter((g) => g.notes.length > 0);
+const publications = doctor.publications.filter((p) => p.verified);
 ---
 <Base title={page.title} description={page.description} route={routes.notes} nav="notes">
-  <div class="container page">
+  <div class="container page-head">
     <h1>{page.title}</h1>
-    <p>{page.description}</p>
-
-    {featured.length > 0 && (
-      <section>
-        <h2>{t.notes.featured}</h2>
-        <NoteList notes={featured} />
-      </section>
-    )}
-
-    <section>
-      <h2>{t.notes.latest}</h2>
-      <NoteList notes={latest} />
-    </section>
+    <p class="intro soft">{t.home.notesTitle}</p>
   </div>
+
+  {featured && (
+    <section class="container featured-section" aria-labelledby="featured-title">
+      <h2 id="featured-title" class="kicker">{t.notes.featured}</h2>
+      <FeaturedNote note={featured} />
+    </section>
+  )}
+
+  <section class="band-white" aria-labelledby="latest-title">
+    <div class="container section">
+      <h2 id="latest-title" class="section-title">{t.notes.latest}</h2>
+      <NoteList notes={latest} summaries />
+    </div>
+  </section>
+
+  <section class="container section" aria-labelledby="topics-title">
+    <h2 id="topics-title" class="section-title">{t.notes.topicsTitle}</h2>
+    <div class="topics">
+      {topics.map((g) => (
+        <section class="topic" aria-labelledby={`topic-${g.topic}`}>
+          <h3 id={`topic-${g.topic}`} class="topic-title">{t.notes.topics[g.topic]}</h3>
+          <NoteList notes={g.notes} level="h4" />
+        </section>
+      ))}
+    </div>
+  </section>
+
+  {(publications.length > 0 || showPreviewLabels) && (
+    <section class="container section elsewhere" aria-labelledby="elsewhere-title">
+      <h2 id="elsewhere-title" class="section-title">{t.notes.publishedElsewhere}</h2>
+      {publications.length > 0
+        ? (
+          <ul class="pub-list">
+            {publications.map((p) => (
+              <li>
+                {p.url ? <a href={p.url} {...external}>{p.title}</a> : p.title}
+                <span class="muted"> · {p.venue} · <time datetime={p.date}>{formatDate(p.date, locale)}</time></span>
+              </li>
+            ))}
+          </ul>
+        )
+        : <p><TBC refNo="5.6" /></p>}
+    </section>
+  )}
 </Base>
+
+<style>
+  .page-head { padding-top: 28px; padding-bottom: 24px; }
+  .page-head h1 { margin: 0; }
+  .intro { margin: 8px 0 0; max-width: var(--measure); font-size: var(--text); }
+  .featured-section { padding-bottom: 48px; }
+  .featured-section .kicker { margin-bottom: 12px; }
+  .featured-section :global(.featured) { max-width: 820px; }
+  .topics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 32px 56px; }
+  .topic-title { margin: 0 0 4px; font-size: var(--title-list); color: var(--green-dark); }
+  .topic :global(.title) { font-size: var(--text); }
+  .elsewhere { padding-top: 0; }
+  .pub-list { margin: 0; padding-left: 1.2em; max-width: var(--measure); }
+  @media (min-width: 860px) {
+    .page-head { padding-top: 64px; padding-bottom: 40px; }
+    .featured-section { padding-bottom: 88px; }
+  }
+</style>

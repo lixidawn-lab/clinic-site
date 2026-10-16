@@ -17,6 +17,10 @@ export async function getDoctor() {
   return (await getEntry('doctor', 'doctor'))?.data ?? missing('doctor', 'doctor');
 }
 
+export async function getConcerns() {
+  return (await getCollection('concerns')).map((e) => e.data).sort(byOrder);
+}
+
 export async function getHowWeBegin() {
   return (await getCollection('howWeBegin')).map((e) => e.data).sort(byOrder);
 }
@@ -31,16 +35,35 @@ export async function getFaq() {
 
 /** All notes, newest first. `slug` is shared by both languages. */
 export async function getNotes() {
-  const [notes, bodies] = await Promise.all([getCollection('notes'), getCollection('noteBodies')]);
+  const [notes, bodies, sources] = await Promise.all([getCollection('notes'), getCollection('noteBodies'), getCollection('sources')]);
   const bodyIds = new Set(bodies.map((b) => b.id));
+  const sourceById = new Map(sources.map((s) => [s.id, s.data]));
   return notes
-    .map((e) => ({
-      slug: e.id,
-      ...e.data,
-      /** Languages that have a full article body. */
-      bodyLocales: (['en', 'zh'] as const).filter((l) => bodyIds.has(`${e.id}/${l}`)),
-    }))
+    .map((e) => {
+      const { sourceSite, ...data } = e.data;
+      const site = sourceSite ? sourceById.get(sourceSite.id) : undefined;
+      if (sourceSite && !site) throw new Error(`Note "${e.id}": unknown sourceSite "${sourceSite.id}" (src/content/sources.json)`);
+      return {
+        slug: e.id,
+        ...data,
+        /** The source website (name, introduction, homepage), or undefined for original articles. */
+        sourceSite: site,
+        /** Languages that have a full article body. */
+        bodyLocales: (['en', 'zh'] as const).filter((l) => bodyIds.has(`${e.id}/${l}`)),
+      };
+    })
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+}
+
+/**
+ * Article source rules (CLAUDE.md「文章来源规则」).
+ * - fullText: whether the full article may be shown (media only with permission).
+ * - externalCanonical: the URL search engines should treat as the original, or null for this site.
+ */
+export function noteSourceRules(note: Note) {
+  const fullText = note.source !== 'media' || note.permission;
+  const externalCanonical = note.source === 'chuangbian' || note.source === 'media' ? (note.sourceUrl ?? null) : null;
+  return { fullText, externalCanonical };
 }
 
 /** Rendered article body in one language, or null if that language has none yet. */

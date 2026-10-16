@@ -1,7 +1,9 @@
 ---
+// Footer (homepage design): logo + © clinic name; social links + privacy notice; MAB approval number.
+// The privacy notice opens in place (<details>), so it doesn't need a page of its own.
 import Field from './Field.astro';
+import Logo from './Logo.astro';
 import { localeFromParams, useTranslations } from '../i18n';
-import { telHref, whatsappHref } from '../lib/links';
 import { isShown } from '../lib/tbc';
 import type { Settings } from '../lib/content';
 
@@ -12,63 +14,59 @@ interface Props {
 const { settings } = Astro.props;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
-const tel = telHref(settings.phone);
-const wa = whatsappHref(settings.whatsapp, settings.bookingMessage[locale]);
+const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
-  <div class="container">
-    {isShown(settings.clinicName[locale]) && <p class="name"><Field value={settings.clinicName[locale]} /></p>}
-    <dl>
-      {isShown(settings.address[locale]) && (
-        <div><dt>{t.footer.address}</dt><dd><Field value={settings.address[locale]} /></dd></div>
-      )}
-      {isShown(settings.phone) && (
-        <div>
-          <dt>{t.footer.phone}</dt>
-          <dd>{tel ? <a href={tel}>{settings.phone}</a> : <Field value={settings.phone} />}</dd>
-        </div>
-      )}
-      {isShown(settings.whatsapp) && (
-        <div>
-          <dt>{t.footer.whatsapp}</dt>
-          <dd>{wa ? <a href={wa} rel="noopener" target="_blank">{settings.whatsapp}</a> : <Field value={settings.whatsapp} />}</dd>
-        </div>
-      )}
-      {isShown(settings.hours[locale]) && (
-        <div><dt>{t.footer.hours}</dt><dd><Field value={settings.hours[locale]} /></dd></div>
-      )}
-      {isShown(settings.mabApprovalNo) && (
-        <div><dt>{t.footer.mabApprovalNo}</dt><dd><Field value={settings.mabApprovalNo} /></dd></div>
+  <div class="container inner">
+    <p class="copyright">
+      <Logo size={28} />
+      {isShown(settings.clinicName[locale]) && <span>© {year} <Field value={settings.clinicName[locale]} /></span>}
+    </p>
+    <div class="links">
+      {settings.socialLinks.length > 0 && (
+        <ul class="social" aria-label={t.a11y.social}>
+          {settings.socialLinks.map((s) => (
+            <li><a href={s.url} rel="noopener me" target="_blank">{t.social[s.platform]}</a></li>
+          ))}
+        </ul>
       )}
       {isShown(settings.privacyNotice[locale]) && (
-        <div><dt>{t.footer.privacy}</dt><dd><Field value={settings.privacyNotice[locale]} /></dd></div>
+        <details class="privacy">
+          <summary>{t.footer.privacy}</summary>
+          <div class="privacy-text"><Field value={settings.privacyNotice[locale]} /></div>
+        </details>
       )}
-      {settings.socialLinks.length > 0 && (
-        <div>
-          <dt>{t.footer.social}</dt>
-          <dd>
-            <ul class="social">
-              {settings.socialLinks.map((s) => (
-                <li><a href={s.url} rel="noopener me" target="_blank">{t.social[s.platform]}</a></li>
-              ))}
-            </ul>
-          </dd>
-        </div>
-      )}
-    </dl>
+    </div>
+    {isShown(settings.mabApprovalNo) && (
+      <p class="mab">{t.footer.mabApprovalNo} <Field value={settings.mabApprovalNo} /></p>
+    )}
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    margin-top: 48px;
-    padding-block: 32px;
-    background: var(--tint);
+  .site-footer { border-top: 1px solid var(--line); font-size: var(--text-meta); color: var(--muted); }
+  .inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 24px;
+    padding-bottom: 32px;
   }
-  .name { margin: 0 0 16px; font-weight: 700; }
-  dl { margin: 0; display: grid; gap: 12px; }
-  dt { font-weight: 600; }
-  dd { margin: 0; white-space: pre-line; }
-  a { display: inline-flex; align-items: center; min-height: var(--tap); }
-  .social { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 16px; }
+  p { margin: 0; }
+  .copyright { display: flex; align-items: center; gap: 10px; }
+  .copyright :global(img) { display: block; width: 28px; height: 28px; }
+  .links { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 20px; }
+  .social { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px; }
+  a, summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    color: var(--muted);
+  }
+  a:hover, summary:hover { color: var(--green-dark); }
+  summary { cursor: pointer; text-decoration: underline; }
+  .privacy-text { max-width: var(--measure); padding-bottom: 8px; white-space: pre-line; }
+  @media (min-width: 860px) {
+    .inner { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding-top: 28px; padding-bottom: 36px; }
+  }
 </style>

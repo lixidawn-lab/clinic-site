@@ -1,7 +1,9 @@
 ---
-// Loud yellow "待补充 · TBC" marker for information the clinic hasn't confirmed yet.
-// `value` is the raw "TBC:3.2" string from content; `refNo` can be passed directly instead.
+// Yellow "待补充 · TBC 3.4" marker for information the clinic hasn't confirmed yet (checklist number attached).
+// `value` is the raw "TBC:3.4" string from content; `refNo` can be passed directly instead.
+// Preview only: renders nothing in production (src/lib/preview.ts).
 import { localeFromParams, useTranslations } from '../i18n';
+import { showPreviewLabels } from '../lib/preview';
 import { tbcRef } from '../lib/tbc';
 
 interface Props {
@@ -12,28 +14,24 @@ interface Props {
 const t = useTranslations(localeFromParams(Astro.params));
 const ref = Astro.props.refNo ?? (Astro.props.value ? tbcRef(Astro.props.value) : '');
 ---
-<mark class="tbc" data-tbc={ref}>
-  {t.tbc.label}
-  {ref && <span class="tbc-ref">TBC {ref}</span>}
-</mark>
+{showPreviewLabels && (
+  <mark class="tbc" data-preview-label="tbc" data-tbc={ref}>
+    {`${t.tbc.label} · TBC${ref ? ` ${ref}` : ''}`}
+  </mark>
+)}
 
 <style>
   .tbc {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.4em;
-    padding: 0.1em 0.5em;
-    border: 2px dashed var(--tbc-ink);
-    border-radius: var(--radius);
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-small);
     background: var(--tbc-bg);
     color: var(--tbc-ink);
+    font-family: var(--font-body);
+    font-size: 13px;
     font-weight: 600;
-    font-size: 0.875em;
-    line-height: 1.4;
-  }
-  .tbc-ref {
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+    vertical-align: middle;
+    white-space: nowrap;
   }
 </style>

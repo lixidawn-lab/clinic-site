@@ -1,9 +1,17 @@
 ---
+// Homepage — final design (方向 B, 交接/设计稿/home-*.html) with the type scale from 交接/进度.md「已决定」.
 import Base from '../../layouts/Base.astro';
 import ClinicInfo from '../../components/ClinicInfo.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
+import Credentials from '../../components/Credentials.astro';
+import FeaturedNote from '../../components/FeaturedNote.astro';
 import NoteList from '../../components/NoteList.astro';
+import Portrait from '../../components/Portrait.astro';
+import Steps from '../../components/Steps.astro';
 import { localeFromParams, localeStaticPaths, localizedPath, useTranslations } from '../../i18n';
-import { getDoctor, getHowWeBegin, getNotes, getSettings } from '../../lib/content';
+import { getConcerns, getDoctor, getHowWeBegin, getNotes, getSettings } from '../../lib/content';
+import { paragraphs } from '../../lib/format';
+import { bookHref, external } from '../../lib/links';
 import { routes } from '../../lib/routes';
 
 export const getStaticPaths = localeStaticPaths;
@@ -11,38 +19,205 @@ export const getStaticPaths = localeStaticPaths;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
 const page = t.pages.home;
-const [settings, doctor, steps, notes] = await Promise.all([getSettings(), getDoctor(), getHowWeBegin(), getNotes()]);
+const [settings, doctor, concerns, steps, notes] = await Promise.all([getSettings(), getDoctor(), getConcerns(), getHowWeBegin(), getNotes()]);
+const bio = doctor.bio[locale];
+const featured = notes.find((n) => n.featured) ?? notes[0];
+const latest = notes.filter((n) => n !== featured).slice(0, 3);
+const book = bookHref(settings.whatsapp, settings.bookingMessage[locale], locale);
+const notesPath = localizedPath(locale, routes.notes);
 ---
 <Base title={page.title} description={page.description} route={routes.home} nav="home">
-  <div class="container page">
-    <h1>{doctor.name[locale]}</h1>
-    <p>{doctor.title[locale]}</p>
-    <p>{doctor.bio[locale].lead}</p>
-    <p><a href={localizedPath(locale, routes.about)}>{t.home.aboutLink}</a></p>
+  <section class="container hero">
+    <div class="hero-side">
+      <Portrait class="hero-photo" alt={doctor.name[locale]} sizes="(min-width: 860px) 320px, calc(100vw - 40px)" priority />
+      <Credentials doctor={doctor} />
+    </div>
+    <div class="hero-text">
+      <div>
+        <h1>{doctor.name[locale]}</h1>
+        <p class="subtitle">{doctor.title[locale]}</p>
+      </div>
+      <p class="lead">{bio.lead}</p>
+      {paragraphs(bio.body).map((p) => <p class="soft">{p}</p>)}
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-primary hero-book" href={book} {...(book.startsWith('https://') ? external : {})}>{t.cta.book}</a>
+      <a class="arrow-link" href={localizedPath(locale, routes.about)}>{t.home.aboutLink} →</a>
+    </div>
+  </section>
 
-    <section>
-      <h2>{t.home.areasOfFocus}</h2>
-      <ul>{doctor.clinicalInterests.map((i) => <li>{i[locale]}</li>)}</ul>
-    </section>
+  <section class="band-white" aria-labelledby="notes-title">
+    <div class="container section notes">
+      <div class="notes-head">
+        <div>
+          <p class="kicker">{t.home.notesKicker}</p>
+          <h2 id="notes-title" class="notes-title">{t.home.notesTitle}</h2>
+        </div>
+        <a class="arrow-link all-notes" href={notesPath}>{t.home.allNotes} →</a>
+      </div>
+      <div class="notes-body">
+        {featured && <div class="notes-featured"><FeaturedNote note={featured} /></div>}
+        <div class="notes-latest"><NoteList notes={latest} /></div>
+      </div>
+      <a class="arrow-link all-notes-mobile" href={notesPath}>{t.home.allNotes} →</a>
+    </div>
+  </section>
 
-    <section>
-      <h2>{t.home.howWeBegin}</h2>
-      <ol>
-        {steps.map((s) => (
-          <li><strong>{s.title[locale]}</strong><br />{s.body[locale]}</li>
+  <div class="container section two-col">
+    <section aria-labelledby="focus-title">
+      <h2 id="focus-title" class="section-title">{t.home.areasOfFocus}</h2>
+      <ul class="focus-list">
+        {doctor.clinicalInterests.map((i) => (
+          <li><a href={`${localizedPath(locale, routes.about)}#${i.id}`}>{i[locale]}<span aria-hidden="true">→</span></a></li>
         ))}
-      </ol>
+      </ul>
     </section>
-
-    <section>
-      <h2>{t.home.latestNotes}</h2>
-      <NoteList notes={notes.slice(0, 3)} />
-      <p><a href={localizedPath(locale, routes.notes)}>{t.home.allNotes}</a></p>
-    </section>
-
-    <section>
-      <h2>{t.home.clinicInfo}</h2>
-      <ClinicInfo settings={settings} />
+    <section aria-labelledby="concerns-title">
+      <h2 id="concerns-title" class="section-title concerns-title">{t.home.concerns}</h2>
+      <p class="section-intro concerns-intro">{t.home.concernsIntro}</p>
+      <ul class="chips">
+        {concerns.map((c) => <li><a class="chip" href={notesPath}>{c.label[locale]}</a></li>)}
+      </ul>
     </section>
   </div>
+
+  <section class="band-tint" aria-labelledby="begin-title">
+    <div class="container section begin">
+      <h2 id="begin-title" class="section-title">{t.home.howWeBegin}</h2>
+      <Steps steps={steps} />
+    </div>
+  </section>
+
+  <section class="container section two-col visit" aria-labelledby="visit-title">
+    <div class="visit-main">
+      <h2 id="visit-title">{t.home.visit}</h2>
+      <p class="soft">{t.home.visitIntro}</p>
+      <ContactButtons settings={settings} />
+    </div>
+    <ClinicInfo settings={settings} />
+  </section>
 </Base>
+
+<style>
+  /* Hero. Phone order: photo → name → intro → credentials → link (design). Desktop: photo + credentials left. */
+  .hero {
+    display: grid;
+    gap: 18px;
+    padding-top: 28px;
+    padding-bottom: 48px;
+  }
+  .hero-side { display: contents; }
+  .hero :global(.hero-photo) { order: 1; }
+  .hero-text { order: 2; }
+  .hero :global(.credentials) { order: 3; padding-top: 16px; border-top: 1px solid var(--line-strong); }
+  .hero-actions { order: 4; }
+  .hero :global(.hero-photo img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 4.2;
+    object-fit: cover;
+    object-position: 50% 15%;
+    border-radius: var(--radius-card);
+  }
+  .hero-text { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .hero-text h1 { margin: 0; }
+  .hero-text p { margin: 0; max-width: var(--measure); }
+  .subtitle { margin-top: 4px !important; font-size: 15px; font-weight: 500; line-height: 1.6; color: var(--green-dark); }
+  .lead { font-family: var(--font-heading); font-size: var(--lead); line-height: 1.45; font-weight: 500; max-width: 720px !important; }
+  .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .hero-book { display: none; }
+
+  /* Doctor's Notes */
+  .notes-head { margin-bottom: 20px; }
+  .notes-title { margin: 6px 0 0; }
+  .all-notes { display: none; }
+  .notes-body { display: flex; flex-direction: column; gap: 12px; }
+  .all-notes-mobile { margin-top: 8px; }
+
+  /* Areas of focus + common concerns */
+  .two-col { display: flex; flex-direction: column; gap: 48px; }
+  .focus-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    column-gap: 32px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .focus-list li { border-top: 1px solid var(--line-strong); margin-bottom: -1px; }
+  .focus-list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: var(--tap);
+    padding: 12px 0;
+    color: var(--ink);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .focus-list a:hover { color: var(--green-dark); }
+  .focus-list span { color: var(--green-dark); }
+  .concerns-title { margin-bottom: 6px; }
+  .concerns-intro { margin-top: 0; }
+  .chips { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding: 8px 16px;
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .chip:hover { border-color: var(--green-dark); color: var(--green-dark); }
+
+  /* How we begin */
+  .begin { padding-block: var(--section); }
+
+  /* Visit the clinic */
+  .visit-main { display: flex; flex-direction: column; gap: 20px; }
+  .visit-main h2, .visit-main p { margin: 0; }
+  .visit-main p { max-width: 520px; }
+
+  @media (min-width: 860px) {
+    .hero {
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      grid-template-areas: 'side text' 'side actions';
+      align-content: center;
+      column-gap: 72px;
+      row-gap: 24px;
+      padding-top: 64px;
+      padding-bottom: 104px;
+    }
+    .hero-side { display: flex; flex-direction: column; gap: 18px; grid-area: side; align-self: center; }
+    .hero :global(.credentials) { padding-top: 0; border-top: 0; }
+    .hero :global(.hero-photo img) { aspect-ratio: 4 / 5; object-position: 50% 18%; }
+    .hero-text { grid-area: text; gap: 24px; align-self: end; }
+    .hero-actions { grid-area: actions; align-self: start; margin-top: 8px; }
+    .subtitle { margin-top: 6px !important; font-size: 18px; }
+    .hero-book { display: inline-flex; padding-block: 15px; }
+
+    .notes-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 44px; }
+    .notes-title { margin-top: 8px; }
+    .all-notes { display: inline-flex; }
+    .all-notes-mobile { display: none; }
+    .notes-body { flex-direction: row; flex-wrap: wrap; gap: 56px; }
+    .notes-featured { flex: 3 1 520px; min-width: 0; }
+    .notes-latest { flex: 2 1 340px; min-width: 0; }
+
+    .two-col { flex-direction: row; flex-wrap: wrap; gap: 72px; }
+    .two-col > * { flex: 1 1 420px; min-width: 0; }
+    .focus-list a { padding: 14px 0; }
+    .concerns-title { margin-bottom: 8px; }
+    .chip { padding: 12px 20px; font-size: 16px; }
+    .begin { padding-block: 88px; }
+    .visit { padding-bottom: 80px; align-items: flex-start; }
+    .visit > :global(.clinic-info) { flex-basis: 380px; }
+  }
+</style>

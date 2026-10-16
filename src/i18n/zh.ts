@@ -3,11 +3,15 @@ import type { Dict } from './en';
 
 export const zh: Dict = {
   langName: '简体中文',
+  langShort: '中文',
   a11y: {
     skipToContent: '跳到正文',
     mainNav: '主导航',
+    menu: '打开菜单',
+    home: '首页',
     switchLanguage: '用简体中文阅读本页',
     bookingBar: '预约咨询',
+    social: '社交媒体',
   },
   nav: {
     home: '首页',
@@ -18,34 +22,44 @@ export const zh: Dict = {
   cta: {
     book: '预约咨询',
     call: '致电',
+    whatsappBook: 'WhatsApp 预约',
+    whatsappClinic: 'WhatsApp 联系诊所',
   },
   footer: {
-    address: '地址',
-    phone: '电话',
-    whatsapp: 'WhatsApp',
-    hours: '营业时间',
     mabApprovalNo: 'MAB 批准编号',
     privacy: '私隐声明',
-    social: '关注涵倪医生',
   },
   social: {
     instagram: 'Instagram',
     youtube: 'YouTube',
     facebook: 'Facebook',
   },
+  // Rendered as "待补充 · TBC 3.4" (checklist number appended).
   tbc: {
-    label: '待补充 · TBC',
+    label: '待补充',
   },
-  draft: {
-    label: '初稿 · 待确认 · Draft',
+  preview: {
+    draft: '初稿 · 待确认 · Draft',
+    review: '待涵倪审阅 · Pending Hanni’s review',
+    permission: '待取得转载许可 · Permission pending',
+  },
+  credentials: {
+    experience: '经验',
+    languages: '看诊语言',
   },
   home: {
-    areasOfFocus: '关注领域',
-    howWeBegin: '如何开始',
-    latestNotes: '最新文章',
+    aboutLink: '认识涵倪',
+    notesKicker: '涵倪的笔记',
+    notesTitle: '来自门诊的思考与分享',
     allNotes: '全部文章',
-    clinicInfo: '诊所信息',
-    aboutLink: '了解涵倪',
+    readNote: '阅读全文',
+    areasOfFocus: '关注领域',
+    concerns: '常见困扰',
+    concernsIntro: '帮助你辨认自己正在经历什么的起点，并非诊断。',
+    howWeBegin: '如何开始',
+    visit: '到访诊所',
+    visitIntro: '通过 WhatsApp 或电话联系诊所，预约初次咨询。',
+    directions: '获取路线',
   },
   about: {
     background: '专业背景',
@@ -61,6 +75,8 @@ export const zh: Dict = {
   notes: {
     featured: '精选文章',
     latest: '最新文章',
+    topicsTitle: '文章主题',
+    publishedElsewhere: '外部发表',
     topics: {
       emotions: '情绪与心理健康',
       symptoms: '理解症状与困扰',
@@ -70,25 +86,34 @@ export const zh: Dict = {
     byline: '文：',
     published: '发布日期',
     reviewed: '最后审阅',
-    topic: '主题',
     inChinese: '中文文章',
     inChineseNotice: '本文目前只有中文版。',
     readInChinese: '阅读中文全文',
+    originallyPublished: '本文原载于 {source}，{date}',
+    readOriginal: '阅读原文',
     disclaimer: '本文仅供一般参考，不构成诊断。如果你担心自己的状况，请咨询医生。',
     bookPrompt: '想和涵倪医生聊聊吗？',
   },
   appointments: {
     services: '诊疗服务',
+    firstVisit: '第一次就诊',
+    beforeVisit: '就诊前须知',
+    followUp: '持续照护',
     faq: '常见问题',
     clinicInfo: '诊所信息',
+    address: '地址',
+    phone: '电话',
+    whatsapp: 'WhatsApp',
+    hours: '营业时间',
     map: '地图',
     parking: '停车与交通',
     fees: '费用',
     payment: '付款方式',
+    book: '预约咨询',
   },
   pages: {
     home: {
-      title: '首页',
+      title: '马六甲精神科医生',
       description: '刘涵倪医生在马来西亚马六甲的精神科专科诊所。认识涵倪的专业背景与关注领域，阅读她的笔记，并预约咨询。',
     },
     about: {

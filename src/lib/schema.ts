@@ -41,7 +41,7 @@ export function physician(doctor: Doctor, settings: Settings, locale: Locale, si
     alternateName: doctor.name[other],
     url: abs(site, localizedPath(locale, routes.about)),
     medicalSpecialty: 'Psychiatric',
-    knowsLanguage: doctor.languages.map((l) => l.en),
+    knowsLanguage: doctor.languages.en,
     hasCredential: doctor.qualifications.map((q) => ({ '@type': 'EducationalOccupationalCredential', name: q[locale] })),
     address: known(settings.address[locale]),
     sameAs: settings.socialLinks.map((s) => s.url),

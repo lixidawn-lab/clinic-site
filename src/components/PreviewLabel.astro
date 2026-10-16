@@ -1,0 +1,30 @@
+---
+// Preview-only label: draft content, article pending Hanni's review, or pending republishing permission.
+// Renders nothing in production (one switch for all labels: src/lib/preview.ts).
+import { localeFromParams, useTranslations } from '../i18n';
+import { showPreviewLabels } from '../lib/preview';
+
+interface Props {
+  kind: 'draft' | 'review' | 'permission';
+}
+const { kind } = Astro.props;
+const t = useTranslations(localeFromParams(Astro.params));
+---
+{showPreviewLabels && <span class="preview-label" data-preview-label={kind}>{t.preview[kind]}</span>}
+
+<style>
+  .preview-label {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px dashed var(--tbc-ink);
+    border-radius: var(--radius-small);
+    background: var(--tbc-bg);
+    color: var(--tbc-ink);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+</style>
