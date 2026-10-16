@@ -1,0 +1,9 @@
+// Cloudflare deploy config. The site is static: Cloudflare serves the files in dist/ as-is
+// (public/_redirects included). "name" must stay "clinic-site" so deploys update the existing Worker.
+{
+  "name": "clinic-site",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
