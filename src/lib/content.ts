@@ -1,10 +1,10 @@
-// The ONLY place pages read content from. When we switch to Sanity (phase 3),
-// only this file changes; components keep calling the same functions.
+// The ONLY place pages read content from. The data comes from Sanity (or, offline, from src/content/):
+// the source is picked in src/content.config.ts, see src/lib/sanity.ts. Pages and components never notice which.
 import { getCollection, getEntry, render } from 'astro:content';
 import type { Locale } from '../i18n';
 
 function missing(collection: string, id: string): never {
-  throw new Error(`Missing entry "${id}" in src/content/${collection}.json`);
+  throw new Error(`Missing entry "${id}" in "${collection}" (Sanity: is the document published?)`);
 }
 
 const byOrder = (a: { order: number }, b: { order: number }) => a.order - b.order;
@@ -42,7 +42,7 @@ export async function getNotes() {
     .map((e) => {
       const { sourceSite, ...data } = e.data;
       const site = sourceSite ? sourceById.get(sourceSite.id) : undefined;
-      if (sourceSite && !site) throw new Error(`Note "${e.id}": unknown sourceSite "${sourceSite.id}" (src/content/sources.json)`);
+      if (sourceSite && !site) throw new Error(`Note "${e.id}": unknown sourceSite "${sourceSite.id}" (is that 来源网站 published?)`);
       return {
         slug: e.id,
         ...data,

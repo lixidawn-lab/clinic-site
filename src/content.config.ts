@@ -1,9 +1,19 @@
-// Content schemas. Field names mirror the future Sanity schema one-to-one (phase 3).
-// Every field here is something Hanni will be able to edit in Sanity later.
+// Content schemas. Field names mirror the Sanity schema in studio/schemaTypes/ one-to-one.
+// Where the content comes from (src/lib/sanity.ts):
+// - default: Sanity (the source of truth since the batch 3 migration; Hanni edits it in the Studio).
+// - CONTENT_SOURCE=local: the JSON / Markdown files in src/content/, for offline work. They are a snapshot from
+//   the migration (2026-10) and do NOT follow later edits in Sanity.
+// - CONTENT_SOURCE=<file>.ndjson: a Sanity export (`sanity dataset export`).
+// The zod schemas below validate the data either way, so a bad value fails the build instead of reaching the site.
 import { defineCollection, reference } from 'astro:content';
-import { file, glob } from 'astro/loaders';
+import { file, glob, type Loader } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { sanityLoader } from './lib/sanity';
 import { TBC_PATTERN } from './lib/tbc';
+
+const local = (import.meta.env.CONTENT_SOURCE ?? process.env.CONTENT_SOURCE) === 'local';
+const source = (collection: Parameters<typeof sanityLoader>[0], localLoader: () => Loader) =>
+  local ? localLoader() : sanityLoader(collection);
 
 const tbc = z.string().regex(TBC_PATTERN);
 const orTbc = <T extends z.ZodType>(schema: T) => z.union([tbc, schema]);
@@ -12,7 +22,7 @@ const localized = z.object({ en: z.string().min(1), zh: z.string().min(1) });
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 const settings = defineCollection({
-  loader: file('src/content/settings.json'),
+  loader: source('settings', () => file('src/content/settings.json')),
   schema: z.object({
     clinicName: localized,
     // Line under the logo name in the header.
@@ -44,7 +54,7 @@ const settings = defineCollection({
 });
 
 const doctor = defineCollection({
-  loader: file('src/content/doctor.json'),
+  loader: source('doctor', () => file('src/content/doctor.json')),
   schema: z.object({
     name: localized,
     title: localized,
@@ -52,12 +62,12 @@ const doctor = defineCollection({
     // `shortLabel` is used in the homepage credentials list ("MMC Reg. 59390").
     registrations: z.array(z.object({ label: localized, shortLabel: localized, number: z.string().min(1) })),
     // Checklist 5.3: whether the MMC / NSR numbers are shown on the site.
-    showRegistrations: z.boolean(),
+    showRegistrations: z.boolean().default(false),
     // Each language keeps its own order (zh: 华语、英语、粤语; en: English, Mandarin, Cantonese).
     languages: z.object({ en: z.array(z.string().min(1)), zh: z.array(z.string().min(1)) }),
     experience: localized,
     // Other practice location (MMC). Kept for reference; shown only when `show` is true.
-    alsoPractises: z.object({ name: localized, show: z.boolean() }),
+    alsoPractises: z.object({ name: localized, show: z.boolean().default(false) }),
     // Hanni's own introduction. `lead` is the large opening line, `body` the rest (paragraphs split by a blank line).
     bio: z.object({
       en: z.object({ lead: z.string().min(1), body: z.string().min(1) }),
@@ -74,40 +84,40 @@ const doctor = defineCollection({
       url: z.url().optional(),
       role: z.enum(['author', 'co-author', 'interviewee']),
       // Only verified publications are rendered (PRD 3.2).
-      verified: z.boolean(),
+      verified: z.boolean().default(false),
     })),
   }),
 });
 
 // Home "Common Concerns" (PRD 3.1): entry points, not diagnoses. For now they all link to Doctor's Notes.
 const concerns = defineCollection({
-  loader: file('src/content/concerns.json'),
+  loader: source('concerns', () => file('src/content/concerns.json')),
   schema: z.object({ order: z.number().int(), label: localized }),
 });
 
 // Home "How We Begin" steps (PRD 3.1).
 const howWeBegin = defineCollection({
-  loader: file('src/content/howWeBegin.json'),
+  loader: source('howWeBegin', () => file('src/content/howWeBegin.json')),
   schema: z.object({ order: z.number().int(), title: localized, body: localized }),
 });
 
 const services = defineCollection({
-  loader: file('src/content/services.json'),
+  loader: source('services', () => file('src/content/services.json')),
   schema: z.object({
     order: z.number().int(),
     title: localized,
     // Confirmed by Hanni (checklist 4.1). Unconfirmed ones carry a "draft" marker on the preview site.
-    confirmed: z.boolean(),
+    confirmed: z.boolean().default(false),
   }),
 });
 
 const faq = defineCollection({
-  loader: file('src/content/faq.json'),
+  loader: source('faq', () => file('src/content/faq.json')),
   schema: z.object({
     order: z.number().int(),
     question: localized,
     answer: localized,
-    confirmed: z.boolean(),
+    confirmed: z.boolean().default(false),
   }),
 });
 
@@ -125,13 +135,13 @@ export const noteSourceTypes = ['original', 'blog', 'chuangbian', 'media'] as co
 
 // One entry per source website: name and a one-or-two-sentence introduction, written once and shared by its articles.
 const sources = defineCollection({
-  loader: file('src/content/sources.json'),
+  loader: source('sources', () => file('src/content/sources.json')),
   schema: z.object({ name: localized, description: localized, url: z.url() }),
 });
 
 // Article metadata. The body lives in `noteBodies` (one Markdown file per language).
 const notes = defineCollection({
-  loader: file('src/content/notes.json'),
+  loader: source('notes', () => file('src/content/notes.json')),
   schema: z.object({
     title: localized,
     summary: localized,
@@ -139,7 +149,7 @@ const notes = defineCollection({
     publishedAt: isoDate,
     // Last medical review by Hanni. Left out until she has reviewed the article.
     reviewedAt: isoDate.optional(),
-    featured: z.boolean(),
+    featured: z.boolean().default(false),
     // Preview site shows "待涵倪审阅" at the top of the article; production never does.
     needsReview: z.boolean().default(false),
     source: z.enum(noteSourceTypes),
@@ -156,13 +166,13 @@ const notes = defineCollection({
   }),
 });
 
-// src/content/notes/<slug>/<lang>.md → id "<slug>/<lang>".
+// src/content/notes/<slug>/<lang>.md (or the Sanity article body) → id "<slug>/<lang>".
 const noteBodies = defineCollection({
-  loader: glob({
+  loader: source('noteBodies', () => glob({
     pattern: '*/{en,zh}.md',
     base: './src/content/notes',
     generateId: ({ entry }) => entry.replace(/\.md$/, ''),
-  }),
+  })),
   schema: z.object({}),
 });
 

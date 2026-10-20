@@ -1,0 +1,22 @@
+{
+  "name": "clinic-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev --port 3334",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "migrate": "node scripts/migrate.mjs"
+  },
+  "dependencies": {
+    "@sanity/locale-zh-hans": "^2.1.40",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "mdast-util-from-markdown": "^2.0.2",
+    "typescript": "^6.0.3"
+  }
+}

@@ -13,6 +13,7 @@
     "check:production": "PUBLIC_ALLOW_INDEXING=true astro build --outDir .production-check && node scripts/check-production.mjs .production-check"
   },
   "dependencies": {
+    "@portabletext/to-html": "^5.0.3",
     "astro": "^7.3.8"
   },
   "devDependencies": {
