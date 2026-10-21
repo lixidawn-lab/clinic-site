@@ -34,12 +34,12 @@ export const faq = defineType({
     localized({ name: 'question', title: '问题' }),
     localized({ name: 'answer', title: '回答', rows: 5, description: '还没有答案时填「TBC:清单编号」，例如 TBC:2.5：预览站显示黄色「待补充」，正式站不显示这一题。' }),
     orderField,
-    confirmedField('涵倪确认这条回答后打开，用来记录哪些已经看过。网站现在不看这个开关：回答是 TBC 时，预览站显示「待补充」，正式站不显示这一题。'),
+    confirmedField('涵倪确认这条回答后打开。没打开时，预览站在问题旁边标「初稿 · 待确认」；网站正式开放前，每一条都要确认。'),
   ],
   orderings: ordered('FAQ'),
   preview: {
     select: { title: 'question.zh', order: 'order', confirmed: 'confirmed' },
-    prepare: ({ title, order, confirmed }) => ({ title, subtitle: [order, confirmed ? '已确认' : '待确认'].join(' · ') }),
+    prepare: ({ title, order, confirmed }) => ({ title, subtitle: [order, confirmed ? '已确认' : '初稿 · 待确认'].join(' · ') }),
   },
 });
 

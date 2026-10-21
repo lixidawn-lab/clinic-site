@@ -74,7 +74,7 @@ const followUp = settings.followUpCare[locale];
       <div class="faq">
         {visibleFaq.map((f) => (
           <div class="faq-item">
-            <h3 class="question">{f.question[locale]}</h3>
+            <h3 class="question">{f.question[locale]} {!f.confirmed && <PreviewLabel kind="draft" />}</h3>
             <p><Field value={f.answer[locale]} /></p>
           </div>
         ))}

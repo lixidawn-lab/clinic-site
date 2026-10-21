@@ -4,6 +4,7 @@
 // 3. No canonical points to example.com or workers.dev (and example.com appears nowhere).
 // 4. robots.txt points to the sitemap, and the sitemap lists exactly the pages whose canonical is on this site:
 //    each <loc> is the canonical of exactly one page, and every such canonical is in the sitemap.
+// 5. Every FAQ answer is confirmed by Hanni (content-status.json, only built for this check; 灵晞 2026-10-20).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -50,9 +51,13 @@ for (const loc of locs) {
 }
 for (const canonical of canonicalPages.keys()) if (!locs.includes(canonical)) problems.push(`sitemap.xml: missing ${canonical}`);
 
+const statusFile = path.join(dir, 'content-status.json');
+if (!fs.existsSync(statusFile)) problems.push('content-status.json missing (run through `npm run check:production`)');
+else for (const q of JSON.parse(fs.readFileSync(statusFile, 'utf8')).unconfirmedFaq) problems.push(`FAQ not confirmed yet (已确认 is off): ${q}`);
+
 fs.rmSync(dir, { recursive: true, force: true });
 if (problems.length) {
   console.error(`✗ Production build has problems:\n${problems.join('\n')}`);
   process.exit(1);
 }
-console.log(`✓ Production build: ${pages} pages. No preview-only labels (TBC / 初稿 / 待涵倪审阅 / 待取得转载许可); every page has an og:image; no canonical on example.com / workers.dev; sitemap.xml (${locs.length} URLs) matches the canonicals one to one.`);
+console.log(`✓ Production build: ${pages} pages. No preview-only labels (TBC / 初稿 / 待涵倪审阅 / 待取得转载许可); every page has an og:image; no canonical on example.com / workers.dev; sitemap.xml (${locs.length} URLs) matches the canonicals one to one; every FAQ answer is confirmed.`);
