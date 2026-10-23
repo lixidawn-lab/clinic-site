@@ -3,8 +3,9 @@
 // Malaysia's PDPA wants the notice in Malay and English, so each language page is followed by the Malay version.
 import Base from '../../layouts/Base.astro';
 import { localeFromParams, localeStaticPaths, useTranslations } from '../../i18n';
-import { getPrivacyNotice } from '../../lib/content';
-import { formatDate } from '../../lib/format';
+import { getPrivacyNotice, getSettings } from '../../lib/content';
+import { fill, formatDate } from '../../lib/format';
+import { known } from '../../lib/tbc';
 import { legalRoutes } from '../../lib/routes';
 
 export const getStaticPaths = localeStaticPaths;
@@ -12,12 +13,13 @@ export const getStaticPaths = localeStaticPaths;
 const locale = localeFromParams(Astro.params);
 const t = useTranslations(locale);
 const page = t.pages.privacy;
-const notice = await getPrivacyNotice();
+const [notice, settings] = await Promise.all([getPrivacyNotice(), getSettings()]);
+const clinic = known(settings.clinicName[locale]) ?? t.privacy.thisClinic;
 const malayDate = new Intl.DateTimeFormat('ms-MY', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${notice.lastUpdated}T00:00:00Z`));
 // The Malay version sits under its own h2, so its section headings move down one level.
 const malayBody = notice.body.ms.replace(/<(\/?)h2>/g, '<$1h3>');
 ---
-<Base title={page.title} description={page.description} route={legalRoutes.privacy}>
+<Base title={page.title} description={fill(page.description, { clinic })} route={legalRoutes.privacy}>
   <article class="container legal">
     <header class="legal-head">
       <h1>{page.title}</h1>

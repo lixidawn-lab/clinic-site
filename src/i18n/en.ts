@@ -134,12 +134,15 @@ export const en = {
     },
     privacy: {
       title: 'Privacy Notice',
-      description: 'How Dr. Lau Harn Ni’s clinic handles personal data under Malaysia’s Personal Data Protection Act 2010.',
+      // {clinic} = the clinic name from the settings.
+      description: 'How {clinic} handles personal data under Malaysia’s Personal Data Protection Act 2010.',
     },
   },
   // Privacy notice page. `ms` is the Malay version shown on both language pages (same text in both dictionaries).
   privacy: {
     lastUpdated: 'Last updated',
+    // {clinic} in the description when the clinic name is still TBC.
+    thisClinic: 'the clinic',
     ms: {
       jump: 'Versi Bahasa Malaysia',
       title: 'Notis Privasi',

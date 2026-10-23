@@ -130,11 +130,13 @@ export const zh: Dict = {
     },
     privacy: {
       title: '私隐声明',
-      description: '刘涵倪精神科专科诊所如何依照马来西亚《2010 年个人资料保护法》处理个人资料。',
+      // {clinic} = the clinic name from 诊所资料.
+      description: '{clinic}如何依照马来西亚《2010 年个人资料保护法》处理个人资料。',
     },
   },
   privacy: {
     lastUpdated: '最后更新',
+    thisClinic: '本诊所',
     ms: {
       jump: 'Versi Bahasa Malaysia',
       title: 'Notis Privasi',
