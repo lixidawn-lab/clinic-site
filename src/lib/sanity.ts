@@ -9,7 +9,7 @@ import { escapeHTML, toHTML, uriLooksSafe, type PortableTextComponents } from '@
 // The project ID is not a secret. SANITY_PROJECT_ID / SANITY_DATASET in .env override it.
 const env = (key: string): string | undefined => import.meta.env[key] ?? process.env[key];
 export const sanityProject = {
-  projectId: env('SANITY_PROJECT_ID') || 'TODO_PROJECT_ID',
+  projectId: env('SANITY_PROJECT_ID') || 'wotb8kz2',
   dataset: env('SANITY_DATASET') || 'production',
 };
 
