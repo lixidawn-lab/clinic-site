@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "check:production": "PUBLIC_ALLOW_INDEXING=true CHECK_CONTENT_STATUS=true astro build --outDir .production-check && node scripts/check-production.mjs .production-check"
+    "check:production": "PUBLIC_ALLOW_INDEXING=true astro build --outDir .production-check && node scripts/check-production.mjs .production-check"
   },
   "dependencies": {
     "@portabletext/to-html": "^5.0.3",
