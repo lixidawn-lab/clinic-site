@@ -30,7 +30,7 @@ const malayBody = notice.body.ms.replace(/<(\/?)h2>/g, '<$1h3>');
 
     <section id="ms" class="legal-ms" lang="ms" aria-labelledby="ms-title">
       <h2 id="ms-title">{t.privacy.ms.title}</h2>
-      <p class="updated">{t.privacy.ms.lastUpdated} <time datetime={notice.lastUpdated}>{malayDate}</time></p>
+      <p class="updated"><span>{t.privacy.ms.lastUpdated} <time datetime={notice.lastUpdated}>{malayDate}</time></span></p>
       <div class="legal-body" set:html={malayBody} />
     </section>
   </article>
