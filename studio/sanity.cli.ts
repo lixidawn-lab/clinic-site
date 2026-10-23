@@ -6,5 +6,5 @@ export default defineCliConfig({
   // 线上后台：https://drlauharnni.sanity.studio（studio/ 下 npm run deploy）
   studioHost: 'drlauharnni',
   // 不跟着 Sanity 自动升级：升级时先在本机试过再部署
-  deployment: { autoUpdates: false },
+  deployment: { appId: 'j0upuheej7a3edvd05t5065g', autoUpdates: false },
 });

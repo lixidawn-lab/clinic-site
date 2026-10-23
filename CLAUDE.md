@@ -24,7 +24,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 ## 技术栈
 - Astro（最新稳定版）+ TypeScript，全站静态生成，正文不依赖 JS。
 - 样式：原生 CSS + CSS 变量。不使用 Tailwind 和 UI 框架。依赖越少越好。
-- 内容：Astro Content Collections，放在 `src/content/`。schema 用 zod 定义，字段与将来的 Sanity schema 一一对应（第 3 阶段切换）。内容读取统一走 `src/lib/content.ts`，切换 CMS 时只需改这一层。
+- 内容：**Sanity 是正本**（2026-10-23 导入，见下方「Sanity 后台」）。网站构建时由 `src/lib/sanity.ts` 的 loader 读取，转换成原来 JSON 的形状，再用 `src/content.config.ts` 的 zod schema 校验（数据不对就构建失败，线上保持旧版）。页面统一通过 `src/lib/content.ts` 读取，不关心数据从哪来。`CONTENT_SOURCE=local` 改读 `src/content/` 里的 JSON / Markdown（离线备用，是迁移时的快照，**不会**跟着后台的修改更新）。
 - 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare（以 Worker 静态资源形式部署），推送 `main` 后自动部署（构建 `npm run build`，部署 `npx wrangler deploy`，配置在 `wrangler.jsonc`，输出 `dist`）。网址见下方「域名」，不设 `PUBLIC_ALLOW_INDEXING`。
 
 ## 域名（临时，2026-10-16）
@@ -50,6 +50,13 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 - `sources`：来源网站的 name{en,zh}、description{en,zh}、url。
 - `concerns`：首页「常见困扰」标签，目前都链接到 Doctor's Notes。
 - `services`、`faq`：带 `confirmed` 布尔值；未确认的显示 TBC。
+
+## Sanity 后台（2026-10-23）
+- 项目 `wotb8kz2`，数据集 `production`（公开：构建不需要密钥，只读得到已发布的内容；免费版，涵倪是 Administrator）。后台 https://drlauharnni.sanity.studio （会跳到 sanity.io 的控制台）。
+- 后台代码在 `studio/`（独立的 npm 包，不影响网站构建）：字段 `studio/schemaTypes/`（中文说明，字段名和 `src/content.config.ts` 一一对应，改字段要两边一起改）、左侧菜单 `studio/structure.ts`（每个 list / listItem 都要写英文 id）、界面用官方中文包 `@sanity/locale-zh-hans`。改了后台代码：`cd studio && npx sanity deploy`（会公开发布，先说明）。
+- 文章正文是 Portable Text，网站构建时转成 HTML（`src/lib/sanity.ts` 的 `bodyToHtml`；「引用框」= 可以放列表的 `<blockquote>`）。后台加了新格式，那边也要加。
+- 迁移脚本 `studio/scripts/migrate.mjs` 是一次性的，2026-10-23 已导入 29 份资料。**不要再导入**（加 `--replace` 会覆盖涵倪在后台的修改）。
+- 发布即更新：Sanity webhook → Cloudflare Workers Builds 的 Deploy Hook（灵晞设置，网址是密钥，Code 不碰）→ 重新构建 `main`。
 
 ## 设计令牌（首页定稿，2026-10-16；代码在 `src/styles/tokens.css`）
 - 颜色：品牌绿 `--green:#239242`（大字、图标、线条）；`--green-dark:#1B7A35`（按钮、链接、小字，白字对比 5.4:1）；`--green-deep:#155F29`（链接悬停；浅绿底上的小字，保证 ≥4.5:1）；浅绿底 `--tint:#DCECC8`；暖白 `--bg:#F8F7F2`；正文 `--ink:#344237`；辅助文字 `--muted:#5A6A5E`；`#419538` 只用于插画和装饰。
@@ -77,7 +84,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 1. **骨架（Code）**：脚手架、令牌、Base 布局、页头/页脚（含固定的预约 CTA）、i18n 路由、SEO head 组件、TBC 组件、noindex 开关；部署 noindex 预览站（GitHub → Cloudflare Pages，推送后自动部署）。
 2. **首页设计（灵晞 + Chat，Code 不参与）**：在 Chat 的设计画布上定首页高保真和设计系统。Code 不做页面视觉设计。
 3. **页面批次（Code）**：首页设计定稿后，套用设计系统，按 PRD 第 3 节分批做出 4 个页面和文章详情页，加 1 篇明确标注的示例文章、JSON-LD、sitemap。每批都部署到预览站。
-4. **Sanity（Code）**：Studio 和 schema、替换 content.ts、发布时用 webhook 重建、文章两种语言都填写才能发布。
+4. **Sanity（Code）**：Studio 和 schema、替换 content.ts、发布时用 webhook 重建。英文文章只有标题和摘要必填（批次 3 放宽了「两种语言都填写才能发布」）。
 5. **验收上线**：死链、hreflang 配对、结构化数据验证、Lighthouse 移动端 ≥ 90、对比度、跨设备测试。获得 MAB 批准（清单 1.1）并经用户明确确认后，才打开收录，提交 Google Search Console 和 Bing。
 
 ## 协作方式（交接/）
