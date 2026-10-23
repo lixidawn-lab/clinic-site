@@ -1,0 +1,20 @@
+---
+// Cloudflare Web Analytics beacon, loaded only on the site's own domain (Astro.site): not on the workers.dev
+// backup address or on localhost, so the numbers are real visitors of the official address only.
+// Added after the page content, `defer`red: it never blocks reading the page.
+import { cloudflareBeaconToken as token } from '../lib/analytics';
+
+const host = Astro.site!.hostname;
+const beacon = JSON.stringify({ token, spa: false });
+---
+{token && (
+  <script is:inline define:vars={{ host, beacon }}>
+    if (location.hostname === host) {
+      var s = document.createElement('script');
+      s.defer = true;
+      s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      s.setAttribute('data-cf-beacon', beacon);
+      document.body.appendChild(s);
+    }
+  </script>
+)}

@@ -9,6 +9,15 @@ export function whatsappHref(number: string, message?: string): string | null {
   return message && !isTbc(message) ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
+/**
+ * How the WhatsApp number is shown on the page. The stored value is digits only (for wa.me), so when it is the
+ * same number as the phone, show the phone's readable format ("+60 12-891 0219") instead of asking for it twice.
+ */
+export function whatsappDisplay(number: string, phone: string): string {
+  if (isTbc(number)) return number;
+  return !isTbc(phone) && phone.replace(/\D/g, '') === number ? phone : `+${number}`;
+}
+
 /** tel: link. Null when the phone number is still TBC. */
 export function telHref(phone: string): string | null {
   if (isTbc(phone)) return null;

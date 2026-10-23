@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BookingCta from '../components/BookingCta.astro';
 import JsonLd from '../components/JsonLd.astro';
+import Analytics from '../components/Analytics.astro';
 import { htmlLang, localeFromParams, useTranslations } from '../i18n';
 import { getDoctor, getSettings } from '../lib/content';
 import { isTbc } from '../lib/tbc';
@@ -53,5 +54,6 @@ const siteName = isTbc(clinicName) ? undefined : clinicName;
     </main>
     <Footer settings={settings} />
     <BookingCta settings={settings} />
+    <Analytics />
   </body>
 </html>
