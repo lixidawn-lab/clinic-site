@@ -20,18 +20,19 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 4. 不放患者评价、疗效描述、治疗前后对比。
 5. 不设表单，不收集个人资料。预约只用 WhatsApp `wa.me` 链接（预填中英文问候）和 `tel:` 链接。
 6. 默认 noindex：只有当 `PUBLIC_ALLOW_INDEXING=true` 时才允许收录，否则全站输出 `<meta name="robots" content="noindex,nofollow">`，robots.txt 设为 `Disallow: /`。上线需用户明确确认。
+   - **2026-10-23 已开放收录**（灵晞确认，原话：「继续批次 5，验收通过后推送开放收录」；她已和涵倪确认网站不需要 MAB 批准）。开关写在 `package.json` 的 `build` 脚本里（`PUBLIC_ALLOW_INDEXING=true astro build`）。要临时关掉收录，就把它从 `build` 脚本里去掉再推送。
 7. 窗边有光的文章可以在诊所网站放全文，开头放来源卡片，canonical 指向窗边有光原文（灵晞 2026-10-16 决定，见「文章来源规则」）。
 
 ## 技术栈
 - Astro（最新稳定版）+ TypeScript，全站静态生成，正文不依赖 JS。
 - 样式：原生 CSS + CSS 变量。不使用 Tailwind 和 UI 框架。依赖越少越好。
 - 内容：**Sanity 是正本**（2026-10-23 导入，见下方「Sanity 后台」）。网站构建时由 `src/lib/sanity.ts` 的 loader 读取，转换成原来 JSON 的形状，再用 `src/content.config.ts` 的 zod schema 校验（数据不对就构建失败，线上保持旧版）。页面统一通过 `src/lib/content.ts` 读取，不关心数据从哪来。`CONTENT_SOURCE=local` 改读 `src/content/` 里的 JSON / Markdown（离线备用，是迁移时的快照，**不会**跟着后台的修改更新）。
-- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare（以 Worker 静态资源形式部署），推送 `main` 后自动部署（构建 `npm run build`，部署 `npx wrangler deploy`，配置在 `wrangler.jsonc`，输出 `dist`）。网址见下方「域名」，不设 `PUBLIC_ALLOW_INDEXING`。
+- 部署：GitHub 私有仓库 `lixidawn-lab/clinic-site` → Cloudflare（以 Worker 静态资源形式部署），推送 `main` 后自动部署（构建 `npm run build`，部署 `npx wrangler deploy`，配置在 `wrangler.jsonc`，输出 `dist`）。网址见下方「域名」。`worker/index.js` 在每个请求前运行，只做一件事：workers.dev 地址整站 301 跳到 clinic.bythewindow.org 的同一页（`wrangler.jsonc` 的 `run_worker_first`）。免费版 Worker 每天 10 万次请求的上限对这个网站绰绰有余。
 
 ## 域名（临时，2026-10-16）
 - 现在用窗边有光已买的域名下的子域名 **`https://clinic.bythewindow.org`**（`astro.config.mjs` 的默认 `site`，`.env` 的 `SITE_URL` 可以覆盖）。canonical、hreflang、og:url、og:image、sitemap、JSON-LD 都用它。代码里不能出现 `example.com`（`npm run check:production` 会检查）。
-- 备用地址 https://clinic-site.lixi-dawn5.workers.dev 保留。两个地址是同一份构建，现在都是 noindex，canonical 都指向 clinic.bythewindow.org。**开放收录时**要关掉 workers.dev 地址（Worker → Settings → Domains & Routes 里停用），否则它也会变成可以收录。
-- ⚠️ **这个域名是临时的。** 正式开放收录（并提交 MAB 审批）之前，要先决定是否换成诊所自己的域名（`交接/进度.md`「等灵晞决定」）。用子域名而不是 `bythewindow.org/clinic` 子目录的原因：以后搬家只要把整个子域名 301 跳转到新域名，比子目录简单，也不会和窗边有光的页面混在一起。
+- 备用地址 https://clinic-site.lixi-dawn5.workers.dev 从 2026-10-23 起整站 301 跳转到 clinic.bythewindow.org（不会被单独收录）。
+- ⚠️ **这个域名是临时的。** 2026-10-23 已用这个域名开放收录。以后如果换成诊所自己的域名，要把整个子域名 301 跳转过去，并在 Search Console 里做「更改地址」。用子域名而不是 `bythewindow.org/clinic` 子目录的原因：以后搬家只要把整个子域名 301 跳转到新域名，比子目录简单，也不会和窗边有光的页面混在一起。
 - 自定义域名由灵晞在 Cloudflare 上绑定（Worker → Settings → Domains & Routes → Add → Custom domain）。Code 不碰 DNS、证书和账号设置。
 
 ## 双语与 SEO
@@ -87,7 +88,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 2. **首页设计（灵晞 + Chat，Code 不参与）**：在 Chat 的设计画布上定首页高保真和设计系统。Code 不做页面视觉设计。
 3. **页面批次（Code）**：首页设计定稿后，套用设计系统，按 PRD 第 3 节分批做出 4 个页面和文章详情页，加 1 篇明确标注的示例文章、JSON-LD、sitemap。每批都部署到预览站。
 4. **Sanity（Code）**：Studio 和 schema、替换 content.ts、发布时用 webhook 重建。英文文章只有标题和摘要必填（批次 3 放宽了「两种语言都填写才能发布」）。
-5. **验收上线**：死链、hreflang 配对、结构化数据验证、Lighthouse 移动端 ≥ 90、对比度、跨设备测试。获得 MAB 批准（清单 1.1）并经用户明确确认后，才打开收录，提交 Google Search Console 和 Bing。
+5. **验收上线**：死链、hreflang 配对、结构化数据验证、Lighthouse 移动端 ≥ 90、对比度、跨设备测试。经用户明确确认后才打开收录，提交 Google Search Console 和 Bing。**2026-10-23 已上线并开放收录**（不需要 MAB 批准，灵晞和涵倪确认）；三个月复盘日期：**2027-01-21**。
 
 ## 协作方式（交接/）
 所有任务和汇报都通过 `交接/` 目录进行。
