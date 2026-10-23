@@ -37,8 +37,6 @@ const settings = defineCollection({
     fees: localized,
     payment: localized,
     mabApprovalNo: z.string().min(1),
-    // Footer privacy notice (PRD 7.2). Reuses the clinic's existing PDPA notice if there is one.
-    privacyNotice: localized,
     // Shown next to the clinic information (checklist 4.7).
     emergencyNotice: localized,
     // Appointments & Clinic blocks that have no copy yet (PRD 3.4): hidden in production while TBC.
@@ -166,6 +164,17 @@ const notes = defineCollection({
   }),
 });
 
+// Privacy notice (PRD 7.2), the legal page /<lang>/privacy/ linked from the footer. Malaysia's PDPA wants the notice
+// in Malay and English, so both language pages also show the Malay version (`ms`). `body` is HTML
+// (Sanity: Portable Text, converted in src/lib/sanity.ts).
+const privacy = defineCollection({
+  loader: source('privacy', () => file('src/content/privacy.json')),
+  schema: z.object({
+    lastUpdated: isoDate,
+    body: z.object({ en: z.string().min(1), zh: z.string().min(1), ms: z.string().min(1) }),
+  }),
+});
+
 // src/content/notes/<slug>/<lang>.md (or the Sanity article body) → id "<slug>/<lang>".
 const noteBodies = defineCollection({
   loader: source('noteBodies', () => glob({
@@ -176,4 +185,4 @@ const noteBodies = defineCollection({
   schema: z.object({}),
 });
 
-export const collections = { settings, doctor, concerns, howWeBegin, services, faq, sources, notes, noteBodies };
+export const collections = { settings, doctor, privacy, concerns, howWeBegin, services, faq, sources, notes, noteBodies };

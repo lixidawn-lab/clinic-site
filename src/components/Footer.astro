@@ -1,9 +1,10 @@
 ---
-// Footer (homepage design): logo + © clinic name; social links + privacy notice; MAB approval number.
-// The privacy notice opens in place (<details>), so it doesn't need a page of its own.
+// Footer (homepage design): logo + © clinic name; social links + privacy notice link; MAB approval number.
+// The privacy notice is a page of its own (/<lang>/privacy/, decided 2026-10-23), linked only from here.
 import Field from './Field.astro';
 import Logo from './Logo.astro';
-import { localeFromParams, useTranslations } from '../i18n';
+import { localeFromParams, localizedPath, useTranslations } from '../i18n';
+import { legalRoutes } from '../lib/routes';
 import { isShown } from '../lib/tbc';
 import type { Settings } from '../lib/content';
 
@@ -30,12 +31,7 @@ const year = new Date().getFullYear();
           ))}
         </ul>
       )}
-      {isShown(settings.privacyNotice[locale]) && (
-        <details class="privacy">
-          <summary>{t.footer.privacy}</summary>
-          <div class="privacy-text"><Field value={settings.privacyNotice[locale]} /></div>
-        </details>
-      )}
+      <a href={localizedPath(locale, legalRoutes.privacy)}>{t.footer.privacy}</a>
     </div>
     {isShown(settings.mabApprovalNo) && (
       <p class="mab">{t.footer.mabApprovalNo} <Field value={settings.mabApprovalNo} /></p>
@@ -57,15 +53,13 @@ const year = new Date().getFullYear();
   .copyright :global(img) { display: block; width: 28px; height: 28px; }
   .links { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 20px; }
   .social { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px; }
-  a, summary {
+  a {
     display: inline-flex;
     align-items: center;
     min-height: var(--tap);
     color: var(--muted);
   }
-  a:hover, summary:hover { color: var(--green-dark); }
-  summary { cursor: pointer; text-decoration: underline; }
-  .privacy-text { max-width: var(--measure); padding-bottom: 8px; white-space: pre-line; }
+  a:hover { color: var(--green-dark); }
   @media (min-width: 860px) {
     .inner { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding-top: 28px; padding-bottom: 36px; }
   }

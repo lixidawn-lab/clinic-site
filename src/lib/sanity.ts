@@ -16,7 +16,7 @@ export const sanityProject = {
 type Doc = { _id: string; _type: string; [key: string]: any };
 type Entry = { id: string; data: Record<string, unknown>; html?: string };
 
-const TYPES = ['settings', 'doctor', 'concern', 'howWeBeginStep', 'service', 'faq', 'source', 'note'];
+const TYPES = ['settings', 'doctor', 'privacyNotice', 'concern', 'howWeBeginStep', 'service', 'faq', 'source', 'note'];
 
 /**
  * All published documents, fetched once per build. Uses the live API, not the CDN, so a build started by the
@@ -100,6 +100,11 @@ export const bodyToHtml = (body: unknown[]) => toHTML(body as any, { components,
 const collections: Record<string, (docs: Doc[]) => Entry[]> = {
   settings: (d) => d.filter((x) => x._id === 'settings').map((x) => ({ id: 'site', data: plain(x) })),
   doctor: (d) => d.filter((x) => x._id === 'doctor').map((x) => ({ id: 'doctor', data: plain(x) })),
+  privacy: (d) =>
+    d.filter((x) => x._id === 'privacyNotice').map(({ lastUpdated, body }) => ({
+      id: 'privacy',
+      data: { lastUpdated, body: Object.fromEntries((['en', 'zh', 'ms'] as const).map((l) => [l, bodyToHtml(body?.[l] ?? [])])) },
+    })),
   concerns: (d) => d.filter((x) => x._type === 'concern').map((x) => ({ id: entryId(x._id, 'concern'), data: plain(x) })),
   howWeBegin: (d) => d.filter((x) => x._type === 'howWeBeginStep').map((x) => ({ id: entryId(x._id, 'step'), data: plain(x) })),
   services: (d) => d.filter((x) => x._type === 'service').map((x) => ({ id: entryId(x._id, 'service'), data: plain(x) })),

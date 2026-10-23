@@ -13,6 +13,7 @@ export const structure = (S: StructureBuilder) =>
   S.list().id('content').title('内容').items([
     singleton(S, 'settings', '诊所资料'),
     singleton(S, 'doctor', '医生资料'),
+    singleton(S, 'privacyNotice', '私隐声明'),
     S.divider(),
     list(S, 'note', '文章', 'publishedAt', 'desc'),
     list(S, 'service', '服务', 'order'),

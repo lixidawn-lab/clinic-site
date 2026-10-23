@@ -15,6 +15,7 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 ## 硬性规则
 1. **绝不编造**诊所名称、地址、电话、营业时间、收费、服务、资历、政策。缺失的信息一律用 `<TBC>` 组件显示（醒目的黄色「待补充 · TBC」标记，并附清单编号，例如 `TBC 3.2`）。
 2. 只有 4 个主页面：Home、About Hanni、Doctor's Notes（含文章详情页 `/notes/[slug]`）、Appointments & Clinic。不增加其他页面。
+   - 例外：法律页面「私隐声明」`/en/privacy/`、`/zh/privacy/`（灵晞 2026-10-23 决定）。不进主导航，只在页脚链接；两种语言的页面都同时显示马来文版本。
 3. 临床兴趣（DBT、TF-CBT 等）只放在「关注领域」，不写成服务。
 4. 不放患者评价、疗效描述、治疗前后对比。
 5. 不设表单，不收集个人资料。预约只用 WhatsApp `wa.me` 链接（预填中英文问候）和 `tel:` 链接。
@@ -44,7 +45,8 @@ Dr. Lau Harn Ni（刘涵倪）在马来西亚马六甲的精神科专科诊所�
 - 所有 UI 文案放在 `src/i18n/{en,zh}.ts`，组件里不写死文字。
 
 ## 内容模型（src/content）
-- `settings`（单例）：clinicName{en,zh}、tagline（页头名字下的一行）、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、privacyNotice{en,zh}、emergencyNotice、beforeYourVisit、followUpCare、bookingMessage{en,zh}、socialLinks（涵倪之后换成诊所账号）。缺失的值统一写 `"TBC:x.x"`（x.x 是 `docs/checklist.md` 的编号，必须写）。
+- `settings`（单例）：clinicName{en,zh}、tagline（页头名字下的一行）、address、phone、whatsapp、hours、mapUrl、parking、fees、payment、mabApprovalNo、emergencyNotice、beforeYourVisit、followUpCare、bookingMessage{en,zh}、socialLinks（涵倪之后换成诊所账号）。缺失的值统一写 `"TBC:x.x"`（x.x 是 `docs/checklist.md` 的编号，必须写）。
+- `privacy`（单例，Sanity 文档 `privacyNotice`，2026-10-23）：lastUpdated、body{en,zh,ms}（Sanity 里是 Portable Text，网站构建时转成 HTML）。页面标题和「最后更新」等字样在 `src/i18n/`。
 - `doctor`（单例）：name、title、qualifications[]、registrations[]、languages{en[],zh[]}（各自的顺序）、experience、bio{en,zh}（lead 是首屏大字；中文使用涵倪提供的原文，不改写）、clinicalInterests[]（带 id，About 页锚点 `/about/#<id>`）、approach、publications[]{title,venue,date,url,role,verified}。只渲染 `verified:true` 的发表。
 - `notes`：title{en,zh}、summary、body（en/zh 各一个 md 文件）、topic、publishedAt、reviewedAt、featured、needsReview、internalNote（给编辑看的备注，不在网站上显示），以及来源字段（见「文章来源规则」）。
 - `sources`：来源网站的 name{en,zh}、description{en,zh}、url。

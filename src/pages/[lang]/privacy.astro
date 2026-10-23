@@ -1,0 +1,59 @@
+---
+// Privacy notice (PRD 7.2). Legal page, not one of the four main pages: linked from the footer only (decided 2026-10-23).
+// Malaysia's PDPA wants the notice in Malay and English, so each language page is followed by the Malay version.
+import Base from '../../layouts/Base.astro';
+import { localeFromParams, localeStaticPaths, useTranslations } from '../../i18n';
+import { getPrivacyNotice } from '../../lib/content';
+import { formatDate } from '../../lib/format';
+import { legalRoutes } from '../../lib/routes';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = localeFromParams(Astro.params);
+const t = useTranslations(locale);
+const page = t.pages.privacy;
+const notice = await getPrivacyNotice();
+const malayDate = new Intl.DateTimeFormat('ms-MY', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${notice.lastUpdated}T00:00:00Z`));
+// The Malay version sits under its own h2, so its section headings move down one level.
+const malayBody = notice.body.ms.replace(/<(\/?)h2>/g, '<$1h3>');
+---
+<Base title={page.title} description={page.description} route={legalRoutes.privacy}>
+  <article class="container legal">
+    <header class="legal-head">
+      <h1>{page.title}</h1>
+      <p class="updated">
+        <span>{t.privacy.lastUpdated} <time datetime={notice.lastUpdated}>{formatDate(notice.lastUpdated, locale)}</time></span>
+        <a href="#ms" hreflang="ms">{t.privacy.ms.jump} ↓</a>
+      </p>
+    </header>
+    <div class="legal-body" set:html={notice.body[locale]} />
+
+    <section id="ms" class="legal-ms" lang="ms" aria-labelledby="ms-title">
+      <h2 id="ms-title">{t.privacy.ms.title}</h2>
+      <p class="updated">{t.privacy.ms.lastUpdated} <time datetime={notice.lastUpdated}>{malayDate}</time></p>
+      <div class="legal-body" set:html={malayBody} />
+    </section>
+  </article>
+</Base>
+
+<style>
+  .legal { max-width: calc(720px + 2 * var(--gutter)); padding-top: 28px; padding-bottom: var(--section); }
+  .legal-head { margin-bottom: 28px; }
+  .legal-head h1 { margin: 0 0 16px; line-height: 1.3; }
+  .updated { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0 20px; font-size: var(--text-meta); color: var(--muted); }
+  .updated a { display: inline-flex; align-items: center; min-height: var(--tap); }
+
+  .legal-body { max-width: var(--measure); }
+  .legal-body :global(p) { margin: 0 0 1.1em; }
+  .legal-body :global(h2), .legal-body :global(h3) { margin: 1.8em 0 0.6em; font-size: var(--title-list); }
+  .legal-body :global(ul), .legal-body :global(ol) { margin: 0 0 1.1em; padding-left: 1.4em; }
+  .legal-body :global(li) { margin-bottom: 0.3em; }
+
+  .legal-ms { margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line-strong); }
+  .legal-ms h2 { margin: 0 0 8px; font-size: var(--h2); }
+  .legal-ms .updated { margin-bottom: 28px; }
+  @media (min-width: 860px) {
+    .legal { padding-top: 64px; }
+    .legal-head { margin-bottom: 40px; }
+  }
+</style>

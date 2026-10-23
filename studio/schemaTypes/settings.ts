@@ -42,7 +42,6 @@ export const settings = defineType({
       description: '访客点「WhatsApp 预约」后，对话框里自动填好的第一句话。',
     }),
     localized({ name: 'emergencyNotice', title: '紧急求助说明', group: 'notices', rows: 4, tbc: '4.7', description: '显示在诊所资料旁边。' }),
-    localized({ name: 'privacyNotice', title: '个人资料保护声明（PDPA）', group: 'notices', rows: 8, tbc: '1.6', description: '显示在每页页脚。' }),
     plainText({
       name: 'mabApprovalNo', title: 'MAB 批准编号', group: 'notices', tbc: '1.5',
       description: '网站获得 MAB（医疗广告委员会）批准后的编号，显示在页脚。',

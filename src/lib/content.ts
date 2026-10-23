@@ -17,6 +17,11 @@ export async function getDoctor() {
   return (await getEntry('doctor', 'doctor'))?.data ?? missing('doctor', 'doctor');
 }
 
+/** Privacy notice: last-updated date and the HTML body in en / zh / ms. */
+export async function getPrivacyNotice() {
+  return (await getEntry('privacy', 'privacy'))?.data ?? missing('privacy', 'privacy');
+}
+
 export async function getConcerns() {
   return (await getCollection('concerns')).map((e) => e.data).sort(byOrder);
 }

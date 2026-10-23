@@ -1,16 +1,16 @@
-// sitemap.xml: every page in both languages, each with its hreflang alternates (PRD 8.1, 8.2).
+// sitemap.xml: every page (including the legal pages) in both languages, each with its hreflang alternates (PRD 8.1, 8.2).
 // Articles whose canonical is on another site (窗边有光 / media, CLAUDE.md「文章来源规则」) are left out:
 // the sitemap lists exactly the pages whose canonical is on this site (checked by `npm run check:production`).
 import type { APIRoute } from 'astro';
 import { defaultLocale, htmlLang, locales, localizedPath } from '../i18n';
 import { getNotes, noteSourceRules } from '../lib/content';
-import { routes } from '../lib/routes';
+import { legalRoutes, routes } from '../lib/routes';
 
 export const GET: APIRoute = async ({ site }) => {
   const abs = (path: string) => new URL(path, site).href;
   const notes = await getNotes();
   const pages: { route: string; lastmod?: string }[] = [
-    ...Object.values(routes).map((route) => ({ route })),
+    ...[...Object.values(routes), ...Object.values(legalRoutes)].map((route) => ({ route })),
     ...notes
       .filter((note) => !noteSourceRules(note).externalCanonical)
       .map((note) => ({ route: `${routes.notes}/${note.slug}`, lastmod: note.reviewedAt ?? note.publishedAt })),

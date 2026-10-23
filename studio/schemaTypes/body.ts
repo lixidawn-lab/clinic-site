@@ -88,3 +88,21 @@ export const noteBody = defineType({
     }),
   ],
 });
+
+/** 法律页面（私隐声明）的正文：只有段落、小标题和列表 */
+export const legalBody = defineType({
+  name: 'legalBody',
+  title: '正文',
+  type: 'array',
+  of: [
+    defineArrayMember({
+      type: 'block',
+      styles: [
+        { title: '正文', value: 'normal' },
+        { title: '小标题', value: 'h2' },
+      ],
+      lists,
+      marks,
+    }),
+  ],
+});

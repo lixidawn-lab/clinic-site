@@ -128,6 +128,18 @@ export const zh: Dict = {
       title: '预约与诊所',
       description: '如何预约刘涵倪医生：第一次就诊、持续照护、常见问题与诊所信息。',
     },
+    privacy: {
+      title: '私隐声明',
+      description: '刘涵倪精神科专科诊所如何依照马来西亚《2010 年个人资料保护法》处理个人资料。',
+    },
+  },
+  privacy: {
+    lastUpdated: '最后更新',
+    ms: {
+      jump: 'Versi Bahasa Malaysia',
+      title: 'Notis Privasi',
+      lastUpdated: 'Kemas kini terakhir',
+    },
   },
   share: {
     cardLine: '马六甲精神科专科医生',

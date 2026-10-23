@@ -132,6 +132,19 @@ export const en = {
       title: 'Appointments & Clinic',
       description: 'How to book with Dr. Lau Harn Ni: your first visit, follow-up care, common questions and clinic information.',
     },
+    privacy: {
+      title: 'Privacy Notice',
+      description: 'How Dr. Lau Harn Ni’s clinic handles personal data under Malaysia’s Personal Data Protection Act 2010.',
+    },
+  },
+  // Privacy notice page. `ms` is the Malay version shown on both language pages (same text in both dictionaries).
+  privacy: {
+    lastUpdated: 'Last updated',
+    ms: {
+      jump: 'Versi Bahasa Malaysia',
+      title: 'Notis Privasi',
+      lastUpdated: 'Kemas kini terakhir',
+    },
   },
   // Share image (og:image, src/pages/og/[lang].jpg.ts): the line under the doctor's name, and its alt text.
   share: {
